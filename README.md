@@ -58,7 +58,7 @@ The basic pipeline of model fitting and visualization include the following step
     - Quantified impact of steric interactions to each considered rxn as a parameter.    
 
 - Jul-20-2022 
-  - Removed constraint of fucosylation (a6FucT) to include all theoretically possible glycans (* CreateGlycanRxnList.mat*). 
+  - Removed constraint of fucosylation (a6FucT) to include all theoretically possible glycans (*CreateGlycanRxnList.mat*). 
   - Restricted the maximal length of LacNAc chain in the function *CreateGlycanRxnList*.
 
 ## **Reference**
