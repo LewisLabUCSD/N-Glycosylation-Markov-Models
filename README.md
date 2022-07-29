@@ -10,7 +10,7 @@ The pipeline is based on our previously published [work](https://www.sciencedire
 ## **Pipeline Overview**
 The basic pipeline of model fitting and visualization include the following steps:
 - **Step 0: Data preparation**
-  - Raw glycomics data and annotations (if available) need to be gathered and processed prior to fitting. Glycomics data with glycan structures/glycan compositions but no m/z values can also be used. Annotations of high-intensity or branching glycoforms are highly recommended.
+  - Raw glycomics data and annotations (if available) need to be gathered and processed prior to fitting. Glycomics data with glycan structures/glycan compositions but no m/z values can also be used. If you do not have the model-compatible glycan compositions but only the glycan structures, ***Sup1_Get_compositions_from_linearcodes.m*** in the ***Supplemental Steps*** folder can be used to obtain corresponding glycan compositions from user-provided linear codes. Annotations of high-intensity or branching glycoforms are highly recommended.
   - ***Data.xlsx*** in the Data folder is the only input required to run the basic pipeline (**Figure 1**). Please refer to ***Step0_Data_Preprocessing.pptx*** for details on how to organize your data.
   - Example glycoprofiles (used in our previous [work](https://www.sciencedirect.com/science/article/pii/S2590262820300010)) were included in the example  ***Data.xlsx*** 
 

@@ -6,7 +6,7 @@ load GenericNetwork.mat;
 OptimizationResults = LoadOptimizationResults('OptimizationResults_Steric'); % load all optimization results and combine them together
 
 % Select the profiles to visualize
-ProfSel = {'Mgat4b'};
+ProfSel = {'WT'};
 
 % Visualize fitted model results for each selected profiles, sequentially
 for a = 1:length(ProfSel)
