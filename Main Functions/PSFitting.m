@@ -31,8 +31,10 @@ Predata_raw = result(end,:);
 Predata_noRes = cellfun(@(x) sum(Predata_raw(x)),AbsGlyIdx);
 
 % impose linkage restriction
+if ~isempty(mzRes)
 AbsGlyIdx(mzRes) = linkagePosRes;
 Predata = cellfun(@(x) sum(Predata_raw(x)),AbsGlyIdx);
+end
 
 %% Compute objective function
 error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData-Predata).^2))./sqrt(length(ExpData));

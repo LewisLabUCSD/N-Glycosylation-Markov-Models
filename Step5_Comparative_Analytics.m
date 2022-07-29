@@ -3,7 +3,7 @@ close all;clc;clear;
 addpath('AUX Functions','Main Functions','Data','Data/OptimizationResults');
 load Data.mat;
 load GenericNetwork.mat;
-OptimizationResults = LoadOptimizationResults('OptimizationResults_steric'); % load all optimization results and combine them together
+OptimizationResults = LoadOptimizationResults('OptimizationResults_Steric'); % load all optimization results and combine them together
 
 % Select the profiles to visualize
 ProfSel = {'St3gal6'};
