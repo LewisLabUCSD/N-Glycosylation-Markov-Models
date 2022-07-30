@@ -23,7 +23,7 @@ for a = 1:length(AllResults)
        combResults.(fdNames{b}) = optstruct.(fdNames{b});
        else
            combResults.(fdNames{b}).xval = [combResults.(fdNames{b}).xval;optstruct.(fdNames{b}).xval];
-           combResults.(fdNames{b}).fval = [combResults.(fdNames{b}).fval,optstruct.(fdNames{b}).fval];
+           combResults.(fdNames{b}).fval = [combResults.(fdNames{b}).fval;optstruct.(fdNames{b}).fval];
        end
    end
 end
