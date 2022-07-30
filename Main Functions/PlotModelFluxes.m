@@ -8,7 +8,7 @@ PseudoFlux = OptimizationResults.(ProfSel).PseudoFlux;
 Rxn_flux = OptimizationResults.(ProfSel).Rxn_flux;
 PseudoConc = OptimizationResults.(ProfSel).PseudoConc;
 Glys_conc = OptimizationResults.(ProfSel).Glys_conc;
-
+Glys = GenericNetwork.Glys;
 
 % Identify RxnType compartments
 AllComp = cellfun(@(x) AllrxnList{find(strcmp(AllrxnList(:,3),x),1),4}(1:4), RxnTypes_noBr, 'UniformOutput',0);
@@ -175,8 +175,61 @@ hold off
 
 % Record data
 Subnetwork.G_trimmed = G_sub;
-Subnetwork.NodeWt = NodeWt;
-Subnetwork.EdgeWt = EdgeWt;
-Subnetwork.MajorEdges = MajorEdges;
+Subnetwork.NodeWt_sub = NodeWt;
+Subnetwork.EdgeWt_sub = EdgeWt;
+Subnetwork.RedEdges_sub = MajorEdges;
+
+% %%%%%%%%%%%%%%% Plot major branching points %%%%%%%%%%%%
+
+% Get all edges from AllPaths
+MajorEdges = {};
+for a = 1:length(AllPaths)
+    MajorEdges = [MajorEdges;[AllPaths{a}(1:end-1)',AllPaths{a}(2:end)']];
+end
+MajorEdges = cellstr(unique(categorical(MajorEdges), 'rows'));
+NodeNames = unique([MajorEdges(:,1);MajorEdges(:,2)]);
+
+% Remove points with bot in and out degrees = 1
+MajorEdges = RemoveNonBranchingNodes(MajorEdges);
+
+% Get edge names (RxnTypes)
+[row,col] = ind2sub(size(GenericNetwork.TM), GenericNetwork.AllrxnList_TMidx);
+rowGly = Glys(row);colGly = Glys(col);
+EdgeNames = cell(size(MajorEdges,1),1);
+EdgeFluxes = zeros(size(MajorEdges,1),1);
+for a = 1:length(EdgeNames)
+    idx = find(strcmp(rowGly,MajorEdges{a,1}) & strcmp(colGly,MajorEdges{a,2}),1);
+    if ~isempty(idx)
+    EdgeNames{a} = AllrxnList_RxnTypes{idx};
+    EdgeFluxes(a) = mean(PseudoFlux(:,idx));
+    else % used outNode psuedo-concentration
+        EdgeNames{a} = '';
+        EdgeFluxes(a) = PseudoConc(strcmp(MajorEdges{a,2},Glys_conc));
+    end
+end
+
+% Construct digraph
+G = digraph(MajorEdges(:,1),MajorEdges(:,2),EdgeFluxes);
+
+% Get Node weights
+nodes = G.Nodes.Name;
+NodeWt = cellfun(@(x) mean(PseudoConc(:,strcmp(x,Glys_conc))),nodes);
+NodeWt = normalize(log2(NodeWt),'range',[2,15]);
+
+% Plot 
+figure
+hold on
+h = plot(G,'EdgeColor','r','LineWidth',2);
+h.NodeLabel = {};
+h.MarkerSize = NodeWt;
+labeledge(h,MajorEdges(:,1),MajorEdges(:,2),strrep(EdgeNames,'_',' '));
+highlight(h,AbsGlySel,'NodeColor','#D95319');
+xticks([]);yticks([]);
+title({'Major branching points in N-glycosylation biosynthetic network',[ProfSel, ' ,Node size proportional to log2(Pseudo-Concentration)']});
+hold off
+
+% Store varaibles
+OptimizationResults.ProfSel.Subnetwork.G_branching = G;
+OptimizationResults.ProfSel.Subnetwork.NodeWt_branching = NodeWt;
 
 end

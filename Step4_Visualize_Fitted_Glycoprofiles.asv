@@ -170,7 +170,7 @@ for a = 1:length(ProfSel)
     %   RMSE divided by percentage perturbation. Each row represents a
     %   reaction type and each column represents a perturbation percentage.
     
-    OptimizationResults.(ProfSel{a}).SensitivityAnalysis = ConductSensitivityAnalysis(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,5);
+    OptimizationResults.(ProfSel{a}).SensitivityAnalysis = ConductSensitivityAnalysis(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,4);
     
 end
 

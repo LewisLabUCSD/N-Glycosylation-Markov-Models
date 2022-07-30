@@ -96,4 +96,4 @@ for a = 1:length(ProfSel)
 end
 
 %% Step 3c. Store the fitting result
-save('Data/OptimizationResults/OptimizationResults_Steric_WT_7.mat','OptimizationResults');
+save('Data/OptimizationResults/OptimizationResults_Steric_WT_12.mat','OptimizationResults');

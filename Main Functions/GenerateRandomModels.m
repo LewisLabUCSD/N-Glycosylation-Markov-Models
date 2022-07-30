@@ -42,22 +42,22 @@ for a = 1:size(xval,1)
     
     % Initiate variables
     if a == 1
-    RandomResults.(Prof).error = error;RandomResults.(Prof).Predata_noRes = Predata_noRes';RandomResults.(Prof).Predata_raw = Predata_raw;RandomResults.(Prof).Glys_raw = Glys_raw;
-    RandomResults.(Prof).PseudoConc = PseudoConc;RandomResults.(Prof).Glys_conc = Glys_conc;RandomResults.(Prof).PseudoFlux = PseudoFlux';RandomResults.(Prof).Rxn_flux = Rxn_flux;
+    RandomResults.error = error;RandomResults.Predata_noRes = Predata_noRes';RandomResults.Predata_raw = Predata_raw;RandomResults.Glys_raw = Glys_raw;
+    RandomResults.PseudoConc = PseudoConc;RandomResults.Glys_conc = Glys_conc;RandomResults.PseudoFlux = PseudoFlux';RandomResults.Rxn_flux = Rxn_flux;
     % Update variables
     else
-        RandomResults.(Prof).error = [RandomResults.(Prof).error;error];
-        RandomResults.(Prof).Predata_noRes = [RandomResults.(Prof).Predata_noRes;Predata_noRes'];
-        RandomResults.(Prof).Predata_raw = [RandomResults.(Prof).Predata_raw;Predata_raw];
-        RandomResults.(Prof).PseudoConc = [RandomResults.(Prof).PseudoConc;PseudoConc];
-        RandomResults.(Prof).PseudoFlux = [RandomResults.(Prof).PseudoFlux;PseudoFlux'];
+        RandomResults.error = [RandomResults.error;error];
+        RandomResults.Predata_noRes = [RandomResults.Predata_noRes;Predata_noRes'];
+        RandomResults.Predata_raw = [RandomResults.Predata_raw;Predata_raw];
+        RandomResults.PseudoConc = [RandomResults.PseudoConc;PseudoConc];
+        RandomResults.PseudoFlux = [RandomResults.PseudoFlux;PseudoFlux'];
     end
 end
 
 % Record experimental info
-RandomResults.(Prof).ExpData = ExpData';
-RandomResults.(Prof).AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
-RandomResults.(Prof).AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
-RandomResults.(Prof).mz_all = DataSet.mz_all; 
-RandomResults.(Prof).xval = xval;
+RandomResults.ExpData = ExpData';
+RandomResults.AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
+RandomResults.AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
+RandomResults.mz_all = DataSet.mz_all; 
+RandomResults.xval = xval;
 end
