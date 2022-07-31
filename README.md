@@ -17,6 +17,7 @@ The basic pipeline of model fitting and visualization include the following step
 - **Step 1: Load Preprocessed Data**
   - This step reads the data from ***Data.xlsx*** and stores the dataset as a structure variable *DataSet*, which is used for fitting & analyses. 
   - Directly run the script ***Step1_Load_Preprocessed_Data.m*** to obtain ***Data.mat***, a MATLAB file containing *DataSet* and stored in ***Data*** folder. The existing *Data.mat* was generated for the example glycoprofiles used for fitting demonstration.
+  - For practicality, the complexity level of the network should not exceed 23.
  
  - **Step 2: Generate a generic *N*-glycosylation Network**
    - This step generates a *N*-glcosylation synthetic network by recursively modifying the high-mannose structure (Man9) using reaction rules as specified in our previous [work](https://www.sciencedirect.com/science/article/pii/S2590262820300010). The size of the network can be controlled based on the scope of glycan structures considered or an arbitrary complexity level. The network is organized as an adjacency matrix for constructing Markov models.
