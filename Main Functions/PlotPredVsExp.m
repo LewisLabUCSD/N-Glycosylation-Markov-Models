@@ -41,7 +41,7 @@ plotData = [ExpData_temp;plotPreData]';
 % err(:,2,2) = PreData_temp(UpErrIdx,:)-plotPreData;
 
 % biased estimation of error
-err = zeros(length(PreData_temp),2);
+err = zeros(size(PreData_temp,2),2);
 err(:,2) = std(PreData_temp,[],1);
 err(err ==0) = nan;
 
