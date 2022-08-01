@@ -2,7 +2,7 @@
 close all;clc;clear;
 addpath('AUX Functions','Main Functions','Data');
 load Data.mat
-load GenericNetwork.mat
+load GenericNetwork_newNetwork.mat
 
 %% Step 3a. Define fitting parameters for Pattern Search Algorithm (stochastic global optimization)
 % Please refer to the function descriptions of patternsearch and optimoptions
@@ -19,7 +19,7 @@ OptimizationResults = struct;
 % Each selected glycoprofiles is fitted sequentially
 for a = 1:length(ProfSel)
     
-    num = 2; % Number of models fitted for each profile
+    num = 4; % Number of models fitted for each profile
     
     for k = 1:num
         
@@ -58,7 +58,7 @@ for a = 1:length(ProfSel)
         %    g. fval: pre-initiated variable storing the fitting errors
         
         
-        StericFlag = true;
+        StericFlag = false;
         UseWTStericFlag = false;
         OptimizationProblem = SetUpFittingProblem(num,ProfSel{a},GenericNetwork,DataSet,StericFlag,UseWTStericFlag,[]);
         
@@ -96,4 +96,4 @@ for a = 1:length(ProfSel)
 end
 
 %% Step 3c. Store the fitting result
-save('Data/OptimizationResults/OptimizationResults_Steric_WT_12.mat','OptimizationResults');
+save('Data/OptimizationResults/OptimizationResults_Steric_WT_NewNewNewNetWork_5.mat','OptimizationResults');

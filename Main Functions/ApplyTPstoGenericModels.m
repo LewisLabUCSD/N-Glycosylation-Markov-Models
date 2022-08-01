@@ -25,7 +25,7 @@ end
 
 %% Compute stationary distribution profile from the scaled Markov model
 mc = dtmc(TM);
-result = redistribute(mc,30,'X0',pi0);
+result = redistribute(mc,25,'X0',pi0);
 
 %% Compute & Record Model characteristics
 Predata_raw = result(end,:); % Stationary distribution of all glycans, isoform-specific

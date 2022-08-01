@@ -57,8 +57,8 @@ for a = 1:length(ProfSel)
         %    f. xval: pre-initiated variable storing the fitted transition probabilities for each "reactions" in RxnTypes
         %    g. fval: pre-initiated variable storing the fitting errors
         
-        StericFlag = true;
-        UseWTStericFlag = true;
+        StericFlag = false;
+        UseWTStericFlag = false;
         
         if StericFlag
             WTSteric = loadWTStericFactors('OptimizationResults_Steric_WT'); % load the files with the input file name. The files should contain the fitted WT models with fitted steric factors.

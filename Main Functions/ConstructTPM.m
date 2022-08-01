@@ -10,13 +10,15 @@ AllrxnList_Br = AllrxnList_TMrow;
 AllrxnList_steric = AllrxnList_TMrow;
 
 % List reactions to consider steric interactions
-stericRxns = {'a3SiaT','b4GalT','iGnT','GnTIV','GnTV'};
+stericRxns =  {'a3SiaT','b4GalT','iGnT','GnTIV','GnTV'};
+% List reactions to consider branching
+branchingRxns = {'a3SiaT','b4GalT','iGnT'};
 
 % Identify transition probability matrix indice for each reaction
 parfor k = 1:size(AllrxnList,1)
-    
+
     WaitMessage.Send;
-    
+
     TempSel = AllrxnList(k,:);
     Rct = TempSel{1};
     Pro = TempSel{2};
@@ -28,26 +30,41 @@ parfor k = 1:size(AllrxnList,1)
         comp2 = comp1(6:9);
         comp1 = comp1(1:4);
     end
-    
+
     AllrxnList_TMrow(k) = find(strcmp(Glys,[Rct,comp1]),1);
     AllrxnList_TMcol(k) = find(strcmp(Glys,[Pro,comp2]),1);
-    
+
     % Distinguish branches and identify steric hindrance for
     % 'a3SiaT','b4GalT', 'iGnT','GnTIV', & 'GnTV')
     if ismember(RxnType,stericRxns)
-        [RctFlag,~,Rctbranches] = IdentifyEndMoiety(Rct);
+        [~,~,Rctbranches] = IdentifyEndMoiety(Rct);
         [~,~,Probranches] = IdentifyEndMoiety(Pro);
         loc = find(~strcmp(Rctbranches,Probranches));
-        
-        AllrxnList_Br(k) = loc;  
-        AllrxnList_steric(k) = sum(RctFlag(1:4~=loc));
-    end   
+
+        AllrxnList_Br(k) = loc;
+
+        % a reactant site is called "shielded" if the addition site is on a
+        % branch where the neighboring branches are longer than the branch where the addition site is on.
+        neighborIdx = intersect(1:4,[loc-1 loc+1]);
+        shieldflag = false(1,length(neighborIdx));
+        addbranchLen = length(strfind(Rctbranches{loc},'a')) + length(strfind(Rctbranches{loc},'b'));
+        for a = 1:length(shieldflag)
+            neighborbranch = Rctbranches{neighborIdx(a)};
+            neighborbranchLen = length(strfind(neighborbranch,'a')) + length(strfind(neighborbranch,'b'));
+            if neighborbranchLen>addbranchLen
+                shieldflag(a) = true;
+            end
+        end
+
+        AllrxnList_steric(k) = sum(shieldflag);
+
+    end
 end
 
 WaitMessage.Destroy;
 
 % Construct transition probability matrix
-TM = zeros(length(Glys));
+TM = sparse(length(Glys));
 for a = 1:length(AllrxnList_TMrow)
     TM(AllrxnList_TMrow(a),AllrxnList_TMcol(a)) = 1;
 end
@@ -62,12 +79,14 @@ TM = sparse(TM./(sum(TM,2)));
 AllrxnList_TMidx = sub2ind(size(TM),AllrxnList_TMrow,AllrxnList_TMcol);
 
 % AllrxnList_RxnTypes & RxnTypes
-AllrxnList_RxnTypes = cell(size(AllrxnList_TMidx));
+AllrxnList_RxnTypes = AllrxnList(:,3);
 for a = 1:length(AllrxnList_RxnTypes)
-    if AllrxnList_Br(a)~=0
-        AllrxnList_RxnTypes{a} = [AllrxnList{a,3},'_B',num2str(AllrxnList_Br(a))];
-    else
-        AllrxnList_RxnTypes{a} = AllrxnList{a,3};
+    if any(strcmp(branchingRxns,AllrxnList{a,3}))
+        if AllrxnList_Br(a)~=0
+            AllrxnList_RxnTypes{a} = [AllrxnList{a,3},'_B',num2str(AllrxnList_Br(a))];
+        else
+            AllrxnList_RxnTypes{a} = AllrxnList{a,3};
+        end
     end
 end
 

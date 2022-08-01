@@ -5,7 +5,7 @@
 Glycosylated biopharmaceuticals are important in the global pharmaceutical market. Despite the importance of their glycan structures, our limited knowledge of the glycosylation machinery still hinders the controllability of this critical quality attribute. To facilitate discovery of glycosyltransferase specificity and predict glycoengineering efforts, here we extend the approach to model N-linked protein glycosylation as a Markov process. Our model leverages putative glycosyltransferase (GT) specificity to define the biosynthetic pathways for all measured glycans, and the Markov chain modeling is used to learn glycosyltransferase isoform activities and predict glycosylation following glycosyltransferase knock-in/knockout.
 
 ## **Requirement**
-The pipeline is based on our previously published [work](https://www.sciencedirect.com/science/article/pii/S2590262820300010). **MATLAB** **ver. 2019b** or above is required to ensure proper execution of all functions. Operators and Elementary Operations, Global Optimization, Parallel Computing, Statistics and Machine Learning, Econometrics, Curve Fitting, and System Identification, Graph and Network Algorithms Toolboxes. All third-party functions were cited as comments at the beginnings of corresponding code scripts. Minimal **16 GB RAM** and two **4-core** CPU(s) are highly recommended to ensure efficient running and fitting processes. 
+The pipeline is based on our previously published [work](https://www.sciencedirect.com/science/article/pii/S2590262820300010). **MATLAB** **ver. 2019b** or above is required to ensure proper execution of all functions. Operators and Elementary Operations, Global Optimization, Parallel Computing, Statistics and Machine Learning, Econometrics, Curve Fitting, and System Identification, Graph and Network Algorithms Toolboxes. All third-party functions were cited as comments at the beginnings of corresponding code scripts. Minimal **32 GB RAM** and two **4-core** CPU(s) are highly recommended to ensure efficient running and fitting processes. Using the minimally required hardware, users should be able to run 3-4 MATLAB sessions for the fitting step (Step 3). RAM is usually the bottleneck for running more MATLAB sessions.  
 
 ## **Pipeline Overview**
 The basic pipeline of model fitting and visualization include the following steps:
@@ -17,14 +17,14 @@ The basic pipeline of model fitting and visualization include the following step
 - **Step 1: Load Preprocessed Data**
   - This step reads the data from ***Data.xlsx*** and stores the dataset as a structure variable *DataSet*, which is used for fitting & analyses. 
   - Directly run the script ***Step1_Load_Preprocessed_Data.m*** to obtain ***Data.mat***, a MATLAB file containing *DataSet* and stored in ***Data*** folder. The existing *Data.mat* was generated for the example glycoprofiles used for fitting demonstration.
-  - For practicality, the complexity level of the network should not exceed 23.
  
  - **Step 2: Generate a generic *N*-glycosylation Network**
    - This step generates a *N*-glcosylation synthetic network by recursively modifying the high-mannose structure (Man9) using reaction rules as specified in our previous [work](https://www.sciencedirect.com/science/article/pii/S2590262820300010). The size of the network can be controlled based on the scope of glycan structures considered or an arbitrary complexity level. The network is organized as an adjacency matrix for constructing Markov models.
    - Directly run the script ***Step2_Create_Genric_Glycan_Network.m*** to obtain ***GenericNetwork.mat***, a MATLAB file containing *GenericNetwork* and stored in ***Data*** folder. *GenericNetwork* contains all information regarding the generic model used for fitting.
-
+ - For practicality, the complexity level of the network should not exceed 23.
+ 
  - **Step 3_1/2: Fit a generic Markov model to WT/other glycoprofiles**
-   - This step generates fitted  Markov models for each specified glycoprofile. Using the default setting, the time required to obtain models for all the glycoprofile is approximately 3 hr/optimization x number of models fitted for each profile x number of profiles/total MATLAB sessions. Please make sure that CPU/memory utilization is not consistently at 100% when the optimization is running. Please refer to MathWork for more details on parallel processing. 
+   - This step generates fitted  Markov models for each specified glycoprofile. Using the default setting, the time required to obtain models for all the glycoprofile is approximately 1.5 hr/optimization x number of models fitted for each profile x number of profiles/total MATLAB sessions. Please make sure that CPU/memory utilization is not consistently at 100% when the optimization is running. Please refer to MathWork for more details on parallel processing. 
    - Fitting the WT glycoprofile first is required when the model steric parameters (Change Log Jul-26-2022) are considered for model fitting (running ***Step3_1_Fit_Markov_Models_with_WT_Glycoprofile.m*** first and ***Step3_2_Fit_Markov_Models_with_other_Glycoprofiles.m*** second). If steric parameters are not considered, either scripts can be used. To obtain more reliable steric factors, users are suggested to fit as many wildtype models as pratically possible.
    - Before running either script, specify the variables *ProfSel* (model names selected to be fitted),  *StericFlag* (true or false, whether to consider the steric impact), and *UseWTStericFlag* (true or false, whether to use the steric impact learnt from the wild type models). Refer to comments in the script for more details.
    - For debug, the evaluation of the Pattern Search Algorithm is plotted in real time and printed to the command window. (**Figure 1**). 
@@ -52,6 +52,9 @@ The basic pipeline of model fitting and visualization include the following step
 - Accessing fitted model parameters and features for additional analyses
 
 ## **Change Log**
+
+- Jul-30-2022
+  - Removed the branch restriction for iGnT to account for major glycoforms with observed LacNAc elongation on branch 1 & 2 in glycoprofiles such as Mgat2 knockout.
 
 - Jul-26-2022
   - Updated consturction, fitting, and visualization functions to make them compatible when users choose to consider the impact of steric interactions of *N*-glycan antenna on model parameters (transition probabilities):

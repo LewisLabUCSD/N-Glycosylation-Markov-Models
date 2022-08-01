@@ -2,8 +2,11 @@
 close all;clc;clear;
 addpath('AUX Functions','Main Functions','Data','Data/OptimizationResults');
 load Data.mat;
-load GenericNetwork.mat;
-OptimizationResults = LoadOptimizationResults('OptimizationResults_Steric'); % load all optimization results and combine them together
+load GenericNetwork_newNetwork.mat;
+% load all optimization results and combine them together. the string input
+% should be the file names excluding the last underscore and the number
+% (_#d).
+OptimizationResults = LoadOptimizationResults('OptimizationResults_Steric_WT_NewNewNewNetWork'); 
 
 % Select the profiles to visualize
 ProfSel = {'WT'};
@@ -13,9 +16,10 @@ for a = 1:length(ProfSel)
     %% Step 4a. Compute model characteristics
     
     %%%%%%%%%%%%%%%%%%%% Computed fitted models %%%%%%%%%%%%%%%%%%%%
-    % ComputeFittedModels simulate the Markov models with fitted parameters
-    % whereas GenerateRandomModels simulate the Markov models with random
+    % ComputeFittedModels simulate the Markov models with fitted
+    % parameters, whereas GenerateRandomModels simulate the Markov models with random
     % parameters.
+    
     % OptimizationResults = ComputeFittedModels(Prof,GenericNetwork,DataSet,OptimizationResults);
     % RandomResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
     
@@ -28,6 +32,7 @@ for a = 1:length(ProfSel)
     % experimental data and computed from Step 1
     % 4. OptimizationResults: the struct variable containing the info
     % regarding the fitted models and computed from Step 3.
+    % 5. simNum: number of random models to be generated.
     
     % Output:
     % 1. OptimizationResults: struct variable constructed from Step 3 and

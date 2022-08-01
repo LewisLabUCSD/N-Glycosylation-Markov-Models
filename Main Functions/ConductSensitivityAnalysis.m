@@ -65,7 +65,7 @@ end
 legend(cellstr(strcat(num2str(ValueRange([1:middleidx-1,end:-1:middleidx+1])'.*100),'%')));
 
 % label figure
-xlabel('RMSE/Percentage Perturbation(+/-)','FontWeight','bold');
+xlabel('RMSE Change%/Perturbation%(+/-)','FontWeight','bold');
 ylabel('Rxn Types','FontWeight','bold');
 yticks(1:length(RxnNames));
 yticklabels(strrep(RxnNames,'_',' '));

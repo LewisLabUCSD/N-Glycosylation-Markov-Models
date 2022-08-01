@@ -25,18 +25,22 @@ end
 
 %% Compute stationary distribution profile from the scaled Markov model
 mc = dtmc(TM);
-result = redistribute(mc,30,'X0',pi0);
+result = redistribute(mc,25,'X0',pi0);
 Predata_raw = result(end,:);
 
 Predata_noRes = cellfun(@(x) sum(Predata_raw(x)),AbsGlyIdx);
 
 % impose linkage restriction
 if ~isempty(mzRes)
-AbsGlyIdx(mzRes) = linkagePosRes;
-Predata = cellfun(@(x) sum(Predata_raw(x)),AbsGlyIdx);
+    AbsGlyIdx(mzRes) = linkagePosRes;
+    Predata = cellfun(@(x) sum(Predata_raw(x)),AbsGlyIdx);
 end
 
 %% Compute objective function
-error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData-Predata).^2))./sqrt(length(ExpData));
+if ~isempty(mzRes)
+    error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData-Predata).^2))./sqrt(length(ExpData));
+else
+    error = sum((ExpData-Predata_noRes).^2)./sqrt(length(ExpData));
+end
 
 end

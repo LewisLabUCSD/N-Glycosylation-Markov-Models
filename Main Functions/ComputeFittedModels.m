@@ -5,8 +5,10 @@ function OptimizationResults = ComputeFittedModels(Prof,GenericNetwork,DataSet,O
 ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 
 %%%%%%%%%%%%%%%%%%%%% Eliminate models with outlier errors %%%%%%%%%%%%%%%%%%%%%
-flag = ~isoutlier(OptimizationResults.(Prof).fval);
-xval = OptimizationResults.(Prof).xval(flag,:);
+flag1 = ~isoutlier(OptimizationResults.(Prof).fval); % filter sample if objective function error is an outlier
+xval = OptimizationResults.(Prof).xval(flag1,:);
+flag2 = any(isoutlier(xval),2); % filter a sample if at least one of its transition probability is an outlier.
+xval = xval(flag2,:);
 StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag; 
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;

@@ -63,27 +63,26 @@ while counter <= K && targetflag
         end
     end
     
-    %% GnTI
+    %% GnTI_1
     %----------------------------------------------------
     % Identify glycotransferase features
     Enzyme = 'GnTI';
     if any(strcmp(Enzyme,Enzymes))
         SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
-        SubstrateString = '\(Ma3\(Ma3\(Ma6\)Ma6\)Mb4';SubstrateString_alt = '(Ma3(Ma3(Ma6)Ma6)Mb4';
-        ProductString = 'GNb2Ma3(Ma3(Ma6)Ma6)Mb4';
+        SubstrateString = '^\(Ma3\(Ma3\(Ma6\)Ma6\)Mb4';SubstrateString_alt1 =  '^\(Ma3\(Ma3\(Ma6\)Ma6\)Mb4';
+        ProductString = 'GNb2';
         
         % get corresponding substrates and add reactions
-        Reactants_temp = CurrentGlycans(cellfun(@(x) contains(x,SubstrateString_alt),CurrentGlycans));
+        Reactants_temp = CurrentGlycans(cellfun(@(x) ~isempty(regexp(x,SubstrateString_alt1,'once')) ,CurrentGlycans));
         
         if ~isempty(Reactants_temp)
             for k = 1:length(Reactants_temp)
-                [startIndex,endIndex] = regexp(Reactants_temp{k},SubstrateString);
+                [startIndex] = regexp(Reactants_temp{k},SubstrateString);
                 Reactants = repmat(Reactants_temp(k),length(startIndex),1);
                 Products = Reactants;
                 for k1 = 1:length(startIndex)
-                    Products{k1} = [Products{k1}(1:startIndex(k1)),ProductString,Products{k1}((endIndex(k1)+1):end)];
+                    Products{k1} = [Products{k1}(1:startIndex(k1)),ProductString,Products{k1}(2:end)];
                 end
-                
                 
                 % document new glycan conversion
                 for a = 1:length(Reactants)
@@ -173,7 +172,7 @@ while counter <= K && targetflag
     Enzyme = 'GnTII';
     if any(strcmp(Enzyme,Enzymes))
         SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
-        SubstrateString = '((\(GNb2)|(\(GNb2\(\w+\)))Ma3\(Ma6\)Mb4'; SubstrateString_alt = '((\(GNb2)|(\(GNb2\(\w+\)))Ma3\(Ma6\)Mb4';
+        SubstrateString = '\(GNb2Ma3\(Ma6\)Mb4'; SubstrateString_alt = '\(GNb2Ma3\(Ma6\)Mb4';
         ProductString = 'GNb2Ma6)Mb4';
         
         % get corresponding substrates and add reactions
@@ -350,16 +349,31 @@ while counter <= K && targetflag
                 end
                 
                 % add constraint
-                flag = cellfun(@(x) isempty(regexp(x,'(GNb3\w*(\))?Ma3)|(GNb3\w*\(\w*\)Ma3)','once')),Products);
-                Reactants = Reactants(flag); Products = Products(flag);
+                % flag = cellfun(@(x) isempty(regexp(x,'(GNb3\w*(\))?Ma3)|(GNb3\w*\(\w*\)Ma3)','once')),Products);
+                flag1 = false(1,length(Products));
+                for k1 = 1:length(flag1)
+                    [BranchFlag,~,Branches_Pro] = IdentifyEndMoiety(Products{k1});
+                    
+                    % Rule 1: Cap LacNAc length at 3 on each chain and 
+                    % two LacNAc chains only possible with two chains present
+                    % to limit the network size
+                    freq = cellfun(@(x) length(strfind(x,'GNb3')),Branches_Pro);
+                    flag1(a) = all(freq<4);
+                    if sum(BranchFlag)>2 && sum(freq>0)>1
+                        flag1(a) = false;
+                    end
+                    
+                end
+                Reactants = Reactants(flag1); Products = Products(flag1);
                 
                 % document new glycan conversion
-                for a = 1:length(Reactants)
-                    % add new glycotransferase reaction
-                    RxnCounter = RxnCounter + 1;
-                    Rxns{RxnCounter,1} = Reactants{a};Rxns{RxnCounter,2} = Products{a};Rxns{RxnCounter,3} = Enzyme;Rxns{RxnCounter,4} = SubSystem;Rxns{RxnCounter,5} = counter;Rxns{RxnCounter,6} = ['GlyRxn_',num2str(RxnCounter)];
+                if ~isempty(Reactants)
+                    for a = 1:length(Reactants)
+                        % add new glycotransferase reaction
+                        RxnCounter = RxnCounter + 1;
+                        Rxns{RxnCounter,1} = Reactants{a};Rxns{RxnCounter,2} = Products{a};Rxns{RxnCounter,3} = Enzyme;Rxns{RxnCounter,4} = SubSystem;Rxns{RxnCounter,5} = counter;Rxns{RxnCounter,6} = ['GlyRxn_',num2str(RxnCounter)];
+                    end
                 end
-                
                 
             end
         end
@@ -514,16 +528,7 @@ end
 
 AllrxnList = [Rxns;transportlist];
 
-% remove syntheses of unrealistic glycans
-% Rule 1: with excessively long antenna (GNb3 >4)
-for a = 1:size(AllrxnList,1)
-    [~,~,Branches] = IdentifyEndMoiety(AllrxnList{a,2});
-    freq = cellfun(@(x) length(strfind(x,'GNb3')),Branches);
-    flag(a) = all(freq<5);
-end
-AllrxnList = AllrxnList(flag,:);
-
-% Obtain the list of all generated glycans
+%% Obtain the list of all generated glycans
 counter = 1;
 for a = 1:size(AllrxnList,1)
     comp = AllrxnList{a,4};

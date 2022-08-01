@@ -6,9 +6,16 @@ AppliedGeneidx = OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationProblem.stericRxns;
 WTSteric = OptimizationProblem.WTSteric;
 stericRxnsIdx = length(AppliedGeneidx)-length(stericRxns)+1:length(AppliedGeneidx);
+UseWTStericFlag = OptimizationProblem.UseWTStericFlag;
+
 
 % determine positions of xval values
-xval_full = zeros(1, length(AppliedGeneidx));
+if StericFlag
+   xval_full = zeros(1, length(AppliedGeneidx));
+else
+    xval_full = zeros(1, length(OptimizationProblem.optimproblem.x0)+3);
+end
+
 if OptimizationProblem.StericFlag && OptimizationProblem.UseWTStericFlag
     xval_full(Rxn_idx) = xval;
     xval_full(stericRxnsIdx) = WTSteric;

@@ -3,7 +3,7 @@ function combResults = LoadOptimizationResults(str)
 % Identify optimization result files from the Data folder
 listing = dir('**/Data/OptimizationResults');
 names = {listing.name};
-names = names(contains(names,str));
+names = names(cellfun(@(x) ~isempty(regexp(x,[str,'\_\d+'],'once')), names));
 
 % Load all optimization results
 AllResults = cell(1,length(names));

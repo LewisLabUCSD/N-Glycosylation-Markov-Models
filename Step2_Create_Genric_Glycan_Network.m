@@ -31,7 +31,7 @@ load Data.mat
 % 2. Glys: a cell vector of strings representing all intermediate glycans produced in the network, also
 % distinguished by Golgi compartments and absorption state ("secreted").
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-N = 26;
+N = 23;
 RxnSel = {'N/A' 'ManI' 'ManII' 'GnTI' 'GnTII' 'GnTIV' 'GnTV' 'a6FucT' 'b4GalT' 'a3SiaT' 'iGnT'};
 [AllrxnList,Glys] = CreateGlycanRxnList(N,RxnSel);
 
@@ -106,4 +106,4 @@ AbsGlyIdx = GenerateAbsGlyIdx(NT, AbsGlys, DataSet.compositions, DataSet.mz_all)
 
 %% Save the generic model
 GenericNetwork = ws2struct; 
-save('Data\GenericNetwork.mat','GenericNetwork');
+save('Data\GenericNetwork_newNetwork.mat','GenericNetwork');
