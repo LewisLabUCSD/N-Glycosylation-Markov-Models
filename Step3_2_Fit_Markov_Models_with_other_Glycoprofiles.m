@@ -69,8 +69,13 @@ for a = 1:length(ProfSel)
         OptimizationProblem = SetUpFittingProblem(num,ProfSel{a},GenericNetwork,DataSet,StericFlag,UseWTStericFlag,WTSteric);
         
         %%%%%%%%%%%%%%%%%%%%% Fitting %%%%%%%%%%%%%%%%%%%%%
-        
-        [xval,fval] = patternsearch(OptimizationProblem.optimproblem);
+        repeatflag = true; % repeat the fitting if algorithm failed to converge in rare cases
+        while repeatflag
+            [xval,fval,~,output] = patternsearch(OptimizationProblem.optimproblem);
+            if output.iterations > 1000
+                repeatflag = false;
+            end
+        end
         
         %%%%%%%%%%%%%%%%%%%%% Record Fitting Results %%%%%%%%%%%%%%%%%%%%%
         

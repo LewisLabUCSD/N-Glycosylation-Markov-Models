@@ -18,18 +18,18 @@ OptimizationResults = struct;
 
 % Each selected glycoprofiles is fitted sequentially
 for a = 1:length(ProfSel)
-    
+
     num = 4; % Number of models fitted for each profile
-    
+
     for k = 1:num
-        
+
         %%%%%%%%%%%%%%%%%%%%% Set up optimization problem %%%%%%%%%%%%%%%%%%%%%
         % For advanced users, please open the function script SetUpFittingProblem
         % to review detailed set-up instruction and modify fitting parameters.
         % Default setup is used here.
-        
+
         % OptimizationProblem = SetUpFittingProblem(Num,GenericNetwork,DataSet);
-        
+
         % Input:
         % 1. Prof: the string of the selected profile name for fitting (must also be an element in DataSet.ProfNames
         % 2. DataSet: struct variable contructed from Step 1.
@@ -45,7 +45,7 @@ for a = 1:length(ProfSel)
         % fitted if fitting a wildtype profile, whereas the wildtype SFs will
         % be fed to the fitting algorithm if fitting a glycoengineered profile.
         %
-        
+
         % Output:
         % 1. Optimization Problem: a struct variable with the following field:
         %    a. optimproblem: actual optimproblem structure containing the fed
@@ -56,19 +56,25 @@ for a = 1:length(ProfSel)
         %    e. ExpData: experimentally measured glycoprofiles (normalized)
         %    f. xval: pre-initiated variable storing the fitted transition probabilities for each "reactions" in RxnTypes
         %    g. fval: pre-initiated variable storing the fitting errors
-        
-        
+
+
         StericFlag = false;
         UseWTStericFlag = false;
         OptimizationProblem = SetUpFittingProblem(num,ProfSel{a},GenericNetwork,DataSet,StericFlag,UseWTStericFlag,[]);
-        
+
         %%%%%%%%%%%%%%%%%%%%% Fitting %%%%%%%%%%%%%%%%%%%%%
-        [xval,fval] = patternsearch(OptimizationProblem.optimproblem);
-              
+        repeatflag = true; % repeat the fitting if algorithm failed to converge in rare cases
+        while repeatflag
+            [xval,fval,~,output] = patternsearch(OptimizationProblem.optimproblem);
+            if output.iterations > 1000
+                repeatflag = false;
+            end
+        end
+
         %%%%%%%%%%%%%%%%%%%%% Record Fitting Results %%%%%%%%%%%%%%%%%%%%%
-        
+
         % OptimizationResults = RecordOptimizationResults(ProfSel{a}, OptimizationResults, xval, fval,OptimizationProblem);
-        
+
         % Input
         % 1. Prof: the string of the selected profile name for fitting
         % 2. OptimizationResults: struct variable used to store all
@@ -77,7 +83,7 @@ for a = 1:length(ProfSel)
         % 4. fval: minimized objective function error of the current run
         % 5. OptimizationProblem: struct storing the fitting problem set up
         % created by the function SetUpFittingProblem.
-        
+
         % Output
         % c. OptimizationResults: updated OptimizationResults variable. Has
         % the following fields:
@@ -90,7 +96,7 @@ for a = 1:length(ProfSel)
         %   fitted model.
         %   c. OptimizationProblem: the struct variable storing the fitting
         %   problem setups
-        
+
         OptimizationResults = RecordOptimizationResults(ProfSel{a}, OptimizationResults, xval, fval,OptimizationProblem);
     end
 end
