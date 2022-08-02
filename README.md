@@ -21,7 +21,7 @@ The basic pipeline of model fitting and visualization include the following step
  - **Step 2: Generate a generic *N*-glycosylation Network**
    - This step generates a *N*-glcosylation synthetic network by recursively modifying the high-mannose structure (Man9) using reaction rules as specified in our previous [work](https://www.sciencedirect.com/science/article/pii/S2590262820300010). The size of the network can be controlled based on the scope of glycan structures considered or an arbitrary complexity level. The network is organized as an adjacency matrix for constructing Markov models.
    - Directly run the script ***Step2_Create_Genric_Glycan_Network.m*** to obtain ***GenericNetwork.mat***, a MATLAB file containing *GenericNetwork* and stored in ***Data*** folder. *GenericNetwork* contains all information regarding the generic model used for fitting.
- - For practicality, the complexity level of the network should not exceed 23.
+ - For practicality, 23 is the sufficient complexity level of the network to theoretically produce most observable *N*-glycans.
  
  - **Step 3_1/2: Fit a generic Markov model to WT/other glycoprofiles**
    - This step generates fitted  Markov models for each specified glycoprofile. Using the default setting, the time required to obtain models for all the glycoprofile is approximately 1.5 hr/optimization x number of models fitted for each profile x number of profiles/total MATLAB sessions. Please make sure that CPU/memory utilization is not consistently at 100% when the optimization is running. Please refer to MathWork for more details on parallel processing. 
