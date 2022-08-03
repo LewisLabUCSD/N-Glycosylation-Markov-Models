@@ -9,7 +9,7 @@ load GenericNetwork.mat;
 OptimizationResults = LoadOptimizationResults({'OptimizationResults_WT','OptimizationResults_others'});
 
 % Select the profiles to visualize
-ProfSel = fieldnames(OptimizationResults);
+ProfSel = {'St3gal4'}; %fieldnames(OptimizationResults);
 
 % Visualize fitted model results for each selected profiles, sequentially
 % Progress bar
@@ -71,9 +71,6 @@ for a = 1:length(ProfSel)
     % 4. OptimizationResults: the struct variable containing the info
     % regarding the fitted models and computed from Step 3.
     % 5. simNum: number of random models to be generated.
-    % 6. removeOutlierFlag: In some cases, stochastic global optimization can be
-    % trapped at local minima. If removeOutlierFlag is true, then the
-    % algorithm will remove the samples with outlier fvals or
 
     % Output:
     % 1. OptimizationResults: struct variable constructed from Step 3 and
@@ -91,7 +88,7 @@ for a = 1:length(ProfSel)
     %    j. AnnotedGlycans: glycan annotations at the annotated m/z values
 
     simNum = 20;
-    OptimizationResults = ComputeFittedModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,removeOutlierFlag);
+    OptimizationResults = ComputeFittedModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults);
     RandomResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
     OptimizationResults.(ProfSel{a}).RandomResults = RandomResults; % record data
 
@@ -158,6 +155,16 @@ for a = 1:length(ProfSel)
     %    c. AllAsGlys: all glycoforms considered for the analysis
 
     OptimizationResults.(ProfSel{a}).GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, 0.001);
+    
+    % You may trace the synthetic path leading to a glycan by using the
+    % function:
+
+    % TraceGlycanSynNetwork(GenericNetwork,startGly)
+
+    % startGly is the string of the starting glycan you would like to
+    % trace. Proceeding and following glycans to startGly will be printed
+    % to the command window. The network can be continuously traced by
+    % clicking the glycans in the command window.
 
     %% Step 4f. visualize model pseudo-fluxes of fitted glycoprofiles
     % [plotData,plotErr] = PlotPredVsExp(ProfSel{a},OptimizationResults);
