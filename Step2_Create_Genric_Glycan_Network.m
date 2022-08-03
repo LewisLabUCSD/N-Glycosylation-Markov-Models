@@ -1,6 +1,6 @@
 %% Initiation
 close all;clc;clear;
-addpath('AUX Functions','Main Functions','Data');
+addpath('Aux Functions','Main Functions','Data');
 load Data.mat
 
 %% Step 2a. Construct a generic N-glycosylation network;
@@ -106,4 +106,4 @@ AbsGlyIdx = GenerateAbsGlyIdx(NT, AbsGlys, DataSet.compositions, DataSet.mz_all)
 
 %% Save the generic model
 GenericNetwork = ws2struct; 
-save('Data\GenericNetwork_newNetwork.mat','GenericNetwork');
+save('Data\GenericNetwork.mat','GenericNetwork');

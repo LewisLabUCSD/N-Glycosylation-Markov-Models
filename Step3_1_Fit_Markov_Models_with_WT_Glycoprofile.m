@@ -1,8 +1,8 @@
 %% Initiation
 close all;clc;clear;
-addpath('AUX Functions','Main Functions','Data');
+addpath('Aux Functions','Main Functions','Data');
 load Data.mat
-load GenericNetwork_newNetwork.mat
+load GenericNetwork.mat
 
 %% Step 3a. Define fitting parameters for Pattern Search Algorithm (stochastic global optimization)
 % Please refer to the function descriptions of patternsearch and optimoptions
@@ -19,14 +19,15 @@ OptimizationResults = struct;
 % Each selected glycoprofiles is fitted sequentially
 for a = 1:length(ProfSel)
 
-    num = 4; % Number of models fitted for each profile
+    num = 10; % Number of models fitted for each profile
 
     for k = 1:num
 
         %%%%%%%%%%%%%%%%%%%%% Set up optimization problem %%%%%%%%%%%%%%%%%%%%%
         % For advanced users, please open the function script SetUpFittingProblem
         % to review detailed set-up instruction and modify fitting parameters.
-        % Default setup is used here.
+        % Default setup is used here. The default setup was used in our
+        % previous work.
 
         % OptimizationProblem = SetUpFittingProblem(Num,GenericNetwork,DataSet);
 
@@ -34,17 +35,18 @@ for a = 1:length(ProfSel)
         % 1. Prof: the string of the selected profile name for fitting (must also be an element in DataSet.ProfNames
         % 2. DataSet: struct variable contructed from Step 1.
         % 3. GenericNetwork: struct variable constructed from Step 2.
-        % 4. StericFlag: true or false, whether to consider the impact of steric interaction
+        % 4. StericFlag: true or false, whether to consider the impact of
+        % steric interaction. Default is false.
         % 5. UseWTStericFlag: whether to apply the fitted WT steric factors to
         % other profiles. StericFlag must be true if this parameter is set
-        % true. If false, the algorithm will fit a new set of steric factors
-        % (SFs)
+        % true. If false, the algorithm will fit a  set of steric factors
+        % (SFs). Default is false.
         % for the profile
         % 6. WTSteric: a double-type vector specifying the the wild type steric factors. If WTStericFlag
         % is false, set WTSteric as []. In the current default setting, the SFs will be
         % fitted if fitting a wildtype profile, whereas the wildtype SFs will
         % be fed to the fitting algorithm if fitting a glycoengineered profile.
-        %
+        
 
         % Output:
         % 1. Optimization Problem: a struct variable with the following field:
@@ -64,9 +66,11 @@ for a = 1:length(ProfSel)
 
         %%%%%%%%%%%%%%%%%%%%% Fitting %%%%%%%%%%%%%%%%%%%%%
         repeatflag = true; % repeat the fitting if algorithm failed to converge in rare cases
+        count = 0;
         while repeatflag
             [xval,fval,~,output] = patternsearch(OptimizationProblem.optimproblem);
-            if output.iterations > 1000
+            count = count + 1;
+            if output.iterations > 500 || count>3
                 repeatflag = false;
             end
         end
@@ -102,4 +106,4 @@ for a = 1:length(ProfSel)
 end
 
 %% Step 3c. Store the fitting result
-save('Data/OptimizationResults/OptimizationResults_Steric_WT_NewNewNewNetWork_5.mat','OptimizationResults');
+save('Data/OptimizationResults/OptimizationResults_WT_5.mat','OptimizationResults');

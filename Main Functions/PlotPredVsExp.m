@@ -41,9 +41,14 @@ plotData = [ExpData_temp;plotPreData]';
 % err(:,2,2) = PreData_temp(UpErrIdx,:)-plotPreData;
 
 % biased estimation of error
-err = zeros(size(PreData_temp,2),2);
-err(:,2) = std(PreData_temp,[],1);
-err(err ==0) = nan;
+err = nan(size(PreData_temp,2),2);
+err(:,2,1) = std(PreData_temp,[],1);
+err(:,2,2) = std(PreData_temp,[],1);
+for a = 1:length(err(:,2,2))
+    if plotPreData(a)-err(a,2,1)<0
+        err(a,2,1) = plotPreData(a);
+    end
+end
 
 % plot bar plot
 figure

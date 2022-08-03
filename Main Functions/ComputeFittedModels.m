@@ -1,14 +1,20 @@
-function OptimizationResults = ComputeFittedModels(Prof,GenericNetwork,DataSet,OptimizationResults)
+function OptimizationResults = ComputeFittedModels(Prof,GenericNetwork,DataSet,OptimizationResults,removeOutlierFlag)
 %% Prepare fitted variables/experimental for computing model characteristics
 
 %%%%%%%%%%%%%%%%%%%%% Extract experimental data %%%%%%%%%%%%%%%%%%%%%
 ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 
 %%%%%%%%%%%%%%%%%%%%% Eliminate models with outlier errors %%%%%%%%%%%%%%%%%%%%%
+xval = OptimizationResults.(Prof).xval;
+fval = OptimizationResults.(Prof).fval;
+if removeOutlierFlag
 flag1 = ~isoutlier(OptimizationResults.(Prof).fval); % filter sample if objective function error is an outlier
-xval = OptimizationResults.(Prof).xval(flag1,:);
-flag2 = any(isoutlier(xval),2); % filter a sample if at least one of its transition probability is an outlier.
-xval = xval(flag2,:);
+% flag2 = ~any(isoutlier(xval)); % filter a sample if at least one of its transition probability is an outlier.
+
+xval = xval(flag1,:);
+fval = fval(flag1,:);
+end
+
 StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag; 
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
@@ -61,5 +67,6 @@ OptimizationResults.(Prof).ExpData = ExpData';
 OptimizationResults.(Prof).AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).mz_all = DataSet.mz_all; 
-
+OptimizationResults.(Prof).xval = xval;
+OptimizationResults.(Prof).fval = fval;
 end

@@ -10,7 +10,7 @@ UseWTStericFlag = OptimizationProblem.UseWTStericFlag;
 
 
 % determine positions of xval values
-if StericFlag
+if OptimizationProblem.StericFlag
    xval_full = zeros(1, length(AppliedGeneidx));
 else
     xval_full = zeros(1, length(OptimizationProblem.optimproblem.x0)+3);

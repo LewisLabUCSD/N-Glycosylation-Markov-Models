@@ -26,7 +26,16 @@ for a = 1:size(FluxesbyComp,1)
     end
 end
 FluxesbyComp_mean = mean(FluxesbyComp);
-FluxesbyComp_std = std(FluxesbyComp);
+
+% biased estimation of error
+err = zeros(1,size(FluxesbyComp,2),2);
+err(1,:,1) = std(FluxesbyComp,[],1);
+err(1,:,2) = std(FluxesbyComp,[],1);
+for a = 1:length(err(1,:,2))
+    if FluxesbyComp_mean(a)-err(1,a,1)<0
+        err(1,a,1) = FluxesbyComp_mean(a);
+    end
+end
 
 % Plot pseudo-fluxes by compartments
 figure
@@ -35,7 +44,7 @@ for k = 1:3
     
     subplot(1,3,k)
     hold on
-    h = barwitherr(FluxesbyComp_std(sets{k}), FluxesbyComp_mean(sets{k}));
+    h = barwitherr(err(:,sets{k},:), FluxesbyComp_mean(sets{k}));
     xlabel(['Rxn Types (',setnames{k},')']);
     ylabel('Total relative pseudo-fluxes');
     xticks(1:length(RxnTypes(sets{k})));
@@ -65,7 +74,16 @@ for a = 1:size(RctPseudoConcbyComp,1)
     end
 end
 RctPseudoConcbyComp_mean = mean(RctPseudoConcbyComp);
-RctPseudoConcbyComp_std = std(RctPseudoConcbyComp);
+
+% biased estimation of error
+err = zeros(1,size(RctPseudoConcbyComp,2),2);
+err(1,:,1) = std(RctPseudoConcbyComp,[],1);
+err(1,:,2) = std(RctPseudoConcbyComp,[],1);
+for a = 1:length(err(1,:,2))
+    if RctPseudoConcbyComp_mean(a)-err(1,a,1)<0
+        err(1,a,1) = RctPseudoConcbyComp_mean(a);
+    end
+end
 
 % Plot pseudo-fluxes by compartments
 figure
@@ -74,7 +92,7 @@ for k = 1:3
     
     subplot(1,3,k)
     hold on
-    h = barwitherr(RctPseudoConcbyComp_std(sets{k}), RctPseudoConcbyComp_mean(sets{k}));
+    h = barwitherr(err(:,sets{k},:), RctPseudoConcbyComp_mean(sets{k}));
     xlabel(['Rxn Types (',setnames{k},')']);
     ylabel('Total relative pseudo-fluxes');
     xticks(1:length(RxnTypes(sets{k})));

@@ -1,6 +1,6 @@
 %% Initiation
 close all;clc;clear;
-addpath('AUX Functions','Main Functions','Data');
+addpath('Aux Functions','Main Functions','Data');
 
 %% Step 1a. Load preprocessed data
 %%%%%%%%%%%%%%%%%%%% Required Data for fitting %%%%%%%%%%%%%%%%%%%%%%%%%

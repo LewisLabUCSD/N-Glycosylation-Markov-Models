@@ -22,9 +22,9 @@ RxnNames = GenericNetwork.RxnTypes(Rxn_idx);
 ValueRange = [-0.5 -0.1 -0.01 0 0.01 0.1 0.5];
 errorMat = zeros(length(RxnNames),length(ValueRange));
 
-f = waitbar(0,'Computing perturbed profile by perturbing:');
+f1 = waitbar(0,'Computing perturbed profile by perturbing:');
 for k1 = 1:length(RxnNames)
-    waitbar(k1/length(RxnNames),f,['Computing perturbed profile by perturbing: ',RxnNames{k1}]);
+    waitbar(k1/length(RxnNames),f1,['Computing perturbed profile by perturbing: ',RxnNames{k1}]);
     for k2 = 1:length(ValueRange)
         
         xval_temp = xval;
@@ -39,6 +39,7 @@ for k1 = 1:length(RxnNames)
         
     end
 end
+delete(f1);
 
 % Normalize errorMat
 errorMat = errorMat./(errorMat(:,4));
@@ -65,12 +66,12 @@ end
 legend(cellstr(strcat(num2str(ValueRange([1:middleidx-1,end:-1:middleidx+1])'.*100),'%')));
 
 % label figure
-xlabel('RMSE Change%/Perturbation%(+/-)','FontWeight','bold');
+xlabel('RMSE Change%/Perturbation% (+/-)','FontWeight','bold');
 ylabel('Rxn Types','FontWeight','bold');
 yticks(1:length(RxnNames));
 yticklabels(strrep(RxnNames,'_',' '));
+title(['Sensitivity analysis for ',Prof]);
 hold off
-
 
 % Record data
 SensitivityAnalysis.ErrorOverPertPct = errorMat;
