@@ -1,4 +1,4 @@
-function OptimizationResults = ComputeFittedModels(Prof,GenericNetwork,DataSet,OptimizationResults,removeOutlierFlag)
+function OptimizationResults = ComputeFittedModels(Prof,GenericNetwork,DataSet,OptimizationResults)
 %% Prepare fitted variables/experimental for computing model characteristics
 
 %%%%%%%%%%%%%%%%%%%%% Extract experimental data %%%%%%%%%%%%%%%%%%%%%
@@ -7,14 +7,6 @@ ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 %%%%%%%%%%%%%%%%%%%%% Eliminate models with outlier errors %%%%%%%%%%%%%%%%%%%%%
 xval = OptimizationResults.(Prof).xval;
 fval = OptimizationResults.(Prof).fval;
-if removeOutlierFlag
-flag1 = ~isoutlier(OptimizationResults.(Prof).fval); % filter sample if objective function error is an outlier
-% flag2 = ~any(isoutlier(xval)); % filter a sample if at least one of its transition probability is an outlier.
-
-xval = xval(flag1,:);
-fval = fval(flag1,:);
-end
-
 StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag; 
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;

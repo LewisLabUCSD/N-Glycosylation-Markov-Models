@@ -358,9 +358,9 @@ while counter <= K && targetflag
                     % two LacNAc chains only possible with two chains present
                     % to limit the network size
                     freq = cellfun(@(x) length(strfind(x,'GNb3')),Branches_Pro);
-                    flag1(a) = all(freq<4);
+                    flag1(k1) = all(freq<4);
                     if sum(BranchFlag)>2 && sum(freq>0)>1
-                        flag1(a) = false;
+                        flag1(k1) = false;
                     end
                     
                 end
