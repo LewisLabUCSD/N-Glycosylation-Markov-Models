@@ -219,7 +219,9 @@ for a = 1:length(ProfSel)
 
     OptimizationResults.(ProfSel{a}).SensitivityAnalysis = ConductSensitivityAnalysis(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,5);
 
-    f= waitbar(a/length(ProfSel),['Compute models and render visualization for: ',ProfSel{a+1}]);
+    if a+1<length(ProfSel)
+        f= waitbar(a/length(ProfSel),['Compute models and render visualization for: ',ProfSel{a+1}]);
+    end
 end
 delete(f);
 
