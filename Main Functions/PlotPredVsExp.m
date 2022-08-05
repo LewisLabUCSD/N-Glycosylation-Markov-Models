@@ -9,12 +9,10 @@ errors = OptimizationResults.(ProfSel).error;
 % numSel: number of top peaks selected (based on the values from
 % experimental profiles)
 
-if nargin ~=3
-numSel = sum(ExpData~=0);
+if isempty(numSel)
+    numSel = sum(ExpData~=0);
 end
-if numSel>20
-    numSel = 20;
-end
+
 
 [~,selIdx] = sort(ExpData);
 selIdx = selIdx((end-numSel+1):end);
@@ -25,17 +23,22 @@ ExpData_temp = ExpData(selIdx);
 PreData_temp = PreData(:,selIdx);
 mz_temp = mz_all(selIdx);
 
+
 %% Plot experimental vs. prediction glycoprofile
 
+% Compute average leakage
+leakage = mean(1-sum(PreData_temp,2));
+
+
 % prep plotting data
-plotPreData = mean(PreData_temp);
+plotPreData = mean(PreData_temp,1);
 plotData = [ExpData_temp;plotPreData]';
 
 % unbiased estimation of error (quantile)
 % err = zeros(length(PreData_temp),2,2);
 % PreData_temp = sort(PreData_temp,1);
 % LoErrIdx = floor(size(PreData_temp,1)*0.25);
-% UpErrIdx = ceil(size(PreData_temp,1)*0.75); 
+% UpErrIdx = ceil(size(PreData_temp,1)*0.75);
 % if UpErrIdx>size(PreData_temp,1); UpErrIdx = size(PreData_temp,1);end
 % err(:,2,1) = plotPreData-PreData_temp(LoErrIdx,:);
 % err(:,2,2) = PreData_temp(UpErrIdx,:)-plotPreData;
@@ -69,7 +72,7 @@ xticks(1:length(mz_temp));
 xticklabels(round(mz_temp));
 xlabel('m/z');
 ylabel('Relative Intensity');
-title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (RMSE = %0.2e)'],mean(errors)));
+title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (RMSE = %0.2e, leakage = %0.2f)'],mean(errors),leakage));
 set(gca,'fontweight','bold')
 set(gca,'TickLength',[0 0]);
 hold off

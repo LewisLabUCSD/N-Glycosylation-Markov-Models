@@ -25,7 +25,7 @@ for a = 1:size(FluxesbyComp,1)
         FluxesbyComp(a,b) = sum(PseudoFlux(a,strcmp(AllrxnList_RxnTypes,RxnTypes{b})));
     end
 end
-FluxesbyComp_mean = mean(FluxesbyComp);
+FluxesbyComp_mean = mean(FluxesbyComp,1);
 
 % biased estimation of error
 err = zeros(1,size(FluxesbyComp,2),2);
@@ -73,7 +73,7 @@ for a = 1:size(RctPseudoConcbyComp,1)
         RctPseudoConcbyComp(a,b) = sum(cellfun(@(x) PseudoConc(a,strcmp(x,Glys_conc)), RctSel));
     end
 end
-RctPseudoConcbyComp_mean = mean(RctPseudoConcbyComp);
+RctPseudoConcbyComp_mean = mean(RctPseudoConcbyComp,1);
 
 % biased estimation of error
 err = zeros(1,size(RctPseudoConcbyComp,2),2);
@@ -116,7 +116,7 @@ hold off
 %  Self-loop edges (absorption rxns) ignored
 SelIdx = ~contains(Rxn_flux(:,1),'[ab]');
 Rxn_flux = Rxn_flux(SelIdx,:);PseudoFlux = PseudoFlux(:,SelIdx);
-PseudoFlux_mean = mean(PseudoFlux);
+PseudoFlux_mean = mean(PseudoFlux,1);
 SelIdx = contains(Rxn_flux(:,1),'[tg]') & contains(Rxn_flux(:,2),'[ab]');
 AbsGlySel = Rxn_flux(SelIdx,2);
 PseudoFlux_mean_AbsGlySel = PseudoFlux_mean(SelIdx);

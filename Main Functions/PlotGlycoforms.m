@@ -11,11 +11,11 @@ Glys = GenericNetwork.Glys;
 % numSel: number of top peaks selected (based on the values from
 % experimental profiles)
 
-if nargin ~=4
-numSel = sum(ExpData~=0);
-end
-if numSel>20
+if isempty(numSel)
     numSel = 20;
+    if numSel>sum(ExpData~=0)
+        numSel = sum(ExpData~=0);
+    end
 end
 
 [~,selIdx] = sort(ExpData);
@@ -26,21 +26,23 @@ selIdx = selIdx(ord);
 mz_temp = mz_all(selIdx);
 AbsGlyIdx = AbsGlyIdx(selIdx);
 AbsGlys= cellfun(@(x) Glys(x)', AbsGlyIdx, 'UniformOutput',0);
-plotData  = cellfun(@(x) mean(PreData(:,ismember(Glys_raw,x))),  AbsGlys, 'UniformOutput',0);
-ExpData = ExpData(selIdx);
+plotData = cell(size(AbsGlys));
+for a = 1:length(AbsGlys)
+    glys = AbsGlys{a};
+    plotData{a} = cellfun(@(x) mean(PreData(:,strcmp(Glys_raw,x))), glys);
+end
+plotData_norm = cellfun(@(x) x./sum(x), plotData, 'UniformOutput',0);
 
 % Only plot glycoforms with signals > threshold
 for a = 1:length(AbsGlyIdx)
-    AbsGlyIdx{a} = AbsGlyIdx{a}(plotData{a}>threshold);
+    plotData_norm{a} = plotData_norm{a}(plotData{a}>threshold);
+    AbsGlys{a} = AbsGlys{a}(plotData{a}>threshold);
 end
-removeflag = ~cellfun(@isempty,AbsGlyIdx);
-mz_temp = mz_temp(removeflag);AbsGlyIdx = AbsGlyIdx(removeflag);ExpData = ExpData(removeflag)';
 
-% Recompute 
-AbsGlys= cellfun(@(x) Glys(x)', AbsGlyIdx, 'UniformOutput',0);
-plotData  = cellfun(@(x) mean(PreData(:,ismember(Glys_raw,x))),  AbsGlys, 'UniformOutput',0);
-plotData_sum = cellfun(@(x) sum(x),  plotData);
-plotData_norm = cellfun(@(x) x./sum(x), plotData, 'UniformOutput',0);
+keepflag = ~cellfun(@isempty,plotData_norm);
+mz_temp = mz_temp(keepflag);
+plotData_norm = plotData_norm(keepflag);
+AbsGlys = AbsGlys(keepflag);
 
 %% Plot experimental vs. prediction glycoprofile
 

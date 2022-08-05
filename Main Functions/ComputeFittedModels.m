@@ -6,11 +6,13 @@ ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 
 %%%%%%%%%%%%%%%%%%%%% Eliminate models with outlier errors %%%%%%%%%%%%%%%%%%%%%
 xval = OptimizationResults.(Prof).xval;
-fval = OptimizationResults.(Prof).fval;
+LacNAcLenPenalty = OptimizationResults.(Prof).LacNAcLenPenalty;
 StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag; 
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
 Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
+AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
+AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
 
 %% Apply each set of fitted transition probabilities to compute model characteristics
 
@@ -38,7 +40,7 @@ Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
 
 for a = 1:size(xval,1)
     
-    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns);
+    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty(a));
     
     % Initiate variables
     if a == 1
@@ -59,6 +61,5 @@ OptimizationResults.(Prof).ExpData = ExpData';
 OptimizationResults.(Prof).AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).mz_all = DataSet.mz_all; 
-OptimizationResults.(Prof).xval = xval;
-OptimizationResults.(Prof).fval = fval;
+
 end

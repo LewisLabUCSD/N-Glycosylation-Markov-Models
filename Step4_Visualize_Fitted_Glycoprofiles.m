@@ -89,8 +89,7 @@ for a = 1:length(ProfSel)
 
     simNum = 20;
     OptimizationResults = ComputeFittedModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults);
-    RandomResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
-    OptimizationResults.(ProfSel{a}).RandomResults = RandomResults; % record data
+    OptimizationResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
 
     %% Step 4c. visualize fitted transition probabilities
     % [xval_media,xval]= PlotTPbyComp(ProfSel{a},OptimizationResults);
@@ -128,7 +127,7 @@ for a = 1:length(ProfSel)
     % Each row represents a fitted model and each column represents a
     % specific m/z.
 
-    OptimizationResults.(ProfSel{a}).ExpVsPredData = PlotPredVsExp(ProfSel{a},OptimizationResults,25);
+    OptimizationResults.(ProfSel{a}).ExpVsPredData = PlotPredVsExp(ProfSel{a},OptimizationResults,35);
 
     %% Step 4e. visualize glycoform ratios for each m/z
     % GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, 0.001);
@@ -140,9 +139,9 @@ for a = 1:length(ProfSel)
     %    contains information of fitted models. Please refer to Step 3 for detailed info.
     % 3. GenericNetwork: the struct variable containing the info regarding
     % a generic N-glycosylation network and computed from Step 2.
-    % 4. numSel (optional): number of top signals to be plotted. m/z with the
+    % 4. numSel: number of top signals to be plotted. m/z with the
     % highest experimental signal intensities will be plotted. If not
-    % specified, top 20 signals (or all signals if total m/z values with non-zero
+    % specified ([]), top 20 signals (or all signals if total m/z values with non-zero
     % signals) will be plotted.
     % 5. threshold: signal intesity threshold below which glycoforms are
     % ignored
@@ -153,18 +152,14 @@ for a = 1:length(ProfSel)
     %    relative glycoform ratios at each m/z
     %    b. mz: m/z values considered for the analysis
     %    c. AllAsGlys: all glycoforms considered for the analysis
-
-    OptimizationResults.(ProfSel{a}).GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, 0.001);
+    threshold = 1e-3;
+    OptimizationResults.(ProfSel{a}).GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, threshold);
     
-    % You may trace the synthetic path leading to a glycan by using the
-    % function:
 
-    % TraceGlycanSynNetwork(GenericNetwork,startGly)
-
-    % startGly is the string of the starting glycan you would like to
-    % trace. Proceeding and following glycans to startGly will be printed
-    % to the command window. The network can be continuously traced by
-    % clicking the glycans in the command window.
+    %%%%%%%%%%%%%%%%%%%%%%%%% Identify and List Top glycans %%%%%%%%%%%%%%%%%%%%%%%%%
+    % Print the top 20 glycans to the command window
+%     TopSel = 40;
+%     OptimizationResults.(ProfSel{a}).GlycoformList = ListTopGlycans(ProfSel{a},OptimizationResults,GenericNetwork,TopSel);
 
     %% Step 4f. visualize model pseudo-fluxes of fitted glycoprofiles
     % [plotData,plotErr] = PlotPredVsExp(ProfSel{a},OptimizationResults);
@@ -196,6 +191,17 @@ for a = 1:length(ProfSel)
     %   G_trimmed.Edges.EndNodes, respectively.
 
     [OptimizationResults.(ProfSel{a}).FluxesbyComp,OptimizationResults.(ProfSel{a}).Subnetwork] = PlotModelFluxes(ProfSel{a},OptimizationResults,GenericNetwork,20);
+
+    %%%%%%%%%%%%%%%%%%%%%%%%% Trace the synthetic pathway of a glycan %%%%%%%%%%%%%%%%%%%%%%%%%
+    % You may trace the synthetic path leading to a specific glycan by using the
+    % function:
+    startGly = '(Ab4GNb2(Ab4GNb4)Ma3(Ab4GNb2(Ab4GNb3Ab4GNb6)Ma6)Mb4GNb4(Fa6)GN);Asn' ;
+    TraceGlycanSynNetwork(ProfSel{a},GenericNetwork,OptimizationResults,startGly);
+
+    % startGly is the string of the starting glycan you would like to
+    % trace. Proceeding and following glycans to startGly will be printed
+    % to the command window. The network can be continuously traced by
+    % clicking the glycans in the command window.
 
     %% Step 4g. Sensitivity analysis (slow, can take >10 min per analysis, comment out the function if do not need the analyses)
     % [plotData,plotErr] = PlotPredVsExp(ProfSel{a},OptimizationResults);

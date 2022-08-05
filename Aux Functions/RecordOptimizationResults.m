@@ -1,6 +1,8 @@
 function OptimizationResults = RecordOptimizationResults(Prof, OptimizationResults, xval, fval,OptimizationProblem)
 
 % Load variables
+LacNAcLenPenalty = xval(end);
+xval = xval(1:end-1);
 Rxn_idx = OptimizationProblem.Rxn_idx;
 AppliedGeneidx = OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationProblem.stericRxns;
@@ -13,7 +15,7 @@ UseWTStericFlag = OptimizationProblem.UseWTStericFlag;
 if OptimizationProblem.StericFlag
    xval_full = zeros(1, length(AppliedGeneidx));
 else
-    xval_full = zeros(1, length(OptimizationProblem.optimproblem.x0)+3);
+    xval_full = zeros(1, length(xval)+3);
 end
 
 if OptimizationProblem.StericFlag && OptimizationProblem.UseWTStericFlag
@@ -30,9 +32,12 @@ end
 if ~any(strcmp(Prof,fieldnames(OptimizationResults)))
     OptimizationResults.(Prof).xval = xval_full;
     OptimizationResults.(Prof).fval = fval;
+    OptimizationResults.(Prof).LacNAcLenPenalty = LacNAcLenPenalty;
+
 else % otherwise concatenate
     OptimizationResults.(Prof).xval = [OptimizationResults.(Prof).xval;xval_full];
     OptimizationResults.(Prof).fval = [OptimizationResults.(Prof).fval;fval];
+    OptimizationResults.(Prof).LacNAcLenPenalty = [OptimizationResults.(Prof).LacNAcLenPenalty;LacNAcLenPenalty];
 end
 
 OptimizationResults.(Prof).OptimizationProblem = OptimizationProblem;

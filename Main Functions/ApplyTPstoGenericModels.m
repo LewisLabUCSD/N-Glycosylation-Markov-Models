@@ -1,4 +1,4 @@
-function [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(scales,Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns)
+function [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(scales,Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty)
 %% Extract variables
 TM = GenericNetwork.TM;
 Geneidx = GenericNetwork.Geneidx;
@@ -15,6 +15,9 @@ AllrxnList_steric = GenericNetwork.AllrxnList_steric;
 for k = 1:length(Rxn_idx)
     TM(Geneidx{k}) = (10.^scales(k)).*TM(Geneidx{k});
 end
+
+% Consider LacNAc length (the last variable)
+TM(AllrxnList_LacNAcLen_idx)  = TM(AllrxnList_LacNAcLen_idx)./exp(LacNAcLenPenalty.*AllrxnList_LacNAcLen);
 
 % consider steric interactions if StericFlag is true
 if StericFlag

@@ -15,10 +15,14 @@ StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag;
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
 Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
+AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
+AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
+LacNAcLenPenalty = OptimizationResults.(Prof).LacNAcLenPenalty;
 
 %% Defined perturbation percentage
 % only perturb actual reactions
 RxnNames = GenericNetwork.RxnTypes(Rxn_idx);
+RxnNames = [RxnNames;{'LacNAc Penalty'}];
 ValueRange = [-0.5 -0.1 -0.01 0 0.01 0.1 0.5];
 errorMat = zeros(length(RxnNames),length(ValueRange));
 
@@ -27,12 +31,16 @@ for k1 = 1:length(RxnNames)
     waitbar(k1/length(RxnNames),f1,['Computing perturbed profile by perturbing: ',RxnNames{k1}]);
     for k2 = 1:length(ValueRange)
         
-        xval_temp = xval;
-        xval_temp(:,Rxn_idx(k1)) = xval_temp(:,Rxn_idx(k1)).*(1+ValueRange(k2));
+        xval_temp = [xval,LacNAcLenPenalty];
+        if strcmp(RxnNames{k1},'LacNAc Penalty')
+            xval_temp(:,end) = xval_temp(:,end).*(1+ValueRange(k2));
+        else
+            xval_temp(:,Rxn_idx(k1)) = xval_temp(:,Rxn_idx(k1)).*(1+ValueRange(k2));
+        end
         errorVec = zeros(size(xval_temp,1),1);
         
         parfor a = 1:size(xval_temp,1)           
-            [errorVec(a)] = ApplyTPstoGenericModels(xval_temp(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns);
+            [errorVec(a)] = ApplyTPstoGenericModels(xval_temp(a,1:end-1),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,xval_temp(a,end));
         end
         
         errorMat(k1,k2) = mean(errorVec);

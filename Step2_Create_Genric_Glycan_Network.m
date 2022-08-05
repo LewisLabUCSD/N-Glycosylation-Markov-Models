@@ -65,9 +65,11 @@ RxnSel = {'N/A' 'ManI' 'ManII' 'GnTI' 'GnTII' 'GnTIV' 'GnTV' 'a6FucT' 'b4GalT' '
 % 5. RxnTypes: cell vector of strings; all antenna-specific reaction types described by the model (Liang & Chiang et al., 2020)
 % 6. AllrxnList_steric: whether a neighboring antenna on the reactant
 % glycan is present (true or false)
+% 7. AllrxnList_LacNAcLen: the length of LacNAc repeats on the reacted
+% branch.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[TM, AllrxnList_TMidx, AllrxnList_Br, AllrxnList_RxnTypes, RxnTypes,AllrxnList_steric,stericRxns] = ConstructTPM(AllrxnList,Glys);
+[TM, AllrxnList_TMidx, AllrxnList_Br, AllrxnList_RxnTypes, RxnTypes,AllrxnList_steric,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx] = ConstructTPM(AllrxnList,Glys);
 
 %% Step 2c. Predefine generic variables for Markov model fitting with Pattern Search Algorithm
 

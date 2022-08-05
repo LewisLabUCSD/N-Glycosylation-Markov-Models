@@ -45,6 +45,8 @@ for a = 1:length(ProfSel)
         % is false, set WTSteric as []. In the current default setting, the SFs will be
         % fitted if fitting a wildtype profile, whereas the wildtype SFs will
         % be fed to the fitting algorithm if fitting a glycoengineered profile.
+        % 7. Method: algorithm chosen for stochastic global optimizations.
+        % Choose beteween 'PatternSearch' or 'PSPSHybrid'.
 
         
         % Output:
@@ -60,55 +62,32 @@ for a = 1:length(ProfSel)
         
         StericFlag = false;
         UseWTStericFlag = false;
+        Method = 'PatternSearch';
         
         if StericFlag
-            WTSteric = loadWTStericFactors('OptimizationResults_Steric_WT'); % load the files with the input file name. The files should contain the fitted WT models with fitted steric factors.
+            WTSteric = loadWTStericFactors('OptimizationResults_WT'); % load the files with the input file name. The files should contain the fitted WT models with fitted steric factors.
         else
             WTSteric = [];
         end
         
-        OptimizationProblem = SetUpFittingProblem(num,ProfSel{a},GenericNetwork,DataSet,StericFlag,UseWTStericFlag,WTSteric);
+        OptimizationProblem = SetUpFittingProblem(num,ProfSel{a},GenericNetwork,DataSet,StericFlag,UseWTStericFlag,WTSteric,Method);
         
-        %%%%%%%%%%%%%%%%%%%%% Fitting %%%%%%%%%%%%%%%%%%%%%
-        repeatflag = true; % repeat the fitting if algorithm failed to converge in rare cases
-        count = 0;
-        while repeatflag
-            [xval,fval,~,output] = patternsearch(OptimizationProblem.optimproblem);
-            count = count + 1;
-            if output.iterations > 500 || count>3
-                repeatflag = false;
-            end
-        end
+        %%%%%%%%%%%%%%%%%%%%% Fitting (global optimization) %%%%%%%%%%%%%%%%%%%%%
+        % OptimizationResults = runGlobalOptimization(Prof, OptimizationResults,OptimizationProblem);
         
-        %%%%%%%%%%%%%%%%%%%%% Record Fitting Results %%%%%%%%%%%%%%%%%%%%%
-        
-        % OptimizationResults = RecordOptimizationResults(ProfSel{a}, OptimizationResults, xval, fval,OptimizationProblem);
-        
-        % Input
-        % 1. Prof: the string of the selected profile name for fitting
-        % 2. OptimizationResults: struct variable used to store all
-        % optimization results.
-        % 3. xval: optimized model parameters of the current run
-        % 4. fval: minimized objective function error of the current run
-        % 5. OptimizationProblem: struct storing the fitting problem set up
-        % created by the function SetUpFittingProblem.
-        
-        % Output
-        % c. OptimizationResults: updated OptimizationResults variable. Has
-        % the following fields:
-        %   a.xval: double-type fitted transition probablities. Each row represent a fitted transition
-        %     probabilities vectors and each column represents a reaction type (in the order of variable RxnTypes).
-        %     Therefore, the number of rows is equal to the number of fitted
-        %     models for a specific profile, whereas the number of columns is
-        %     equal to the the length of variable RxnTypes.
-        %   b.fval: the errors computed by the objective function for each
-        %   fitted model.
-        %   c. OptimizationProblem: the struct variable storing the fitting
-        %   problem setups
-        
-        OptimizationResults = RecordOptimizationResults(ProfSel{a}, OptimizationResults, xval, fval,OptimizationProblem);
+        % Input:
+        % 1. Prof: the string of the selected profile name for fitting (must also be an element in DataSet.ProfNames
+        % 2. DataSet: struct variable contructed from Step 1.
+        % 3. OptimizationProblem: struct variable constructed from
+        % SetUpFittingProblem.
+
+        % Output: 
+        % 1. OptimizationResults: struct variable storing the optimized
+        % parameters and errors
+
+        OptimizationResults = runGlobalOptimization(ProfSel{a}, OptimizationResults,OptimizationProblem);
     end
 end
 
 %% Step 3c. Store the fitting result
-save('Data/OptimizationResults/OptimizationResults_others_11.mat','OptimizationResults');
+save('Data/OptimizationResults/OptimizationResults_others_97.mat','OptimizationResults');

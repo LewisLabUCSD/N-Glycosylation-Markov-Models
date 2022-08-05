@@ -1,4 +1,4 @@
-function error = PSFitting(scales,TM,Geneidx,Rxn_idx,AbsGlyIdx,ExpData,pi0,mzRes,linkagePosRes,StericFlag,AllrxnList_steric,WTSteric)
+function error = PSFitting(scales,TM,Geneidx,Rxn_idx,AbsGlyIdx,ExpData,pi0,mzRes,linkagePosRes,StericFlag,AllrxnList_steric,WTSteric,AllrxnList_LacNAcLen_idx,AllrxnList_LacNAcLen)
 %% Modify transition probability matrix based on the fed scaling factor
 
 % scale rxns
@@ -6,16 +6,18 @@ for k = 1:length(Rxn_idx)
     TM(Geneidx{Rxn_idx(k)}) = (10.^scales(k)).*TM(Geneidx{Rxn_idx(k)});
 end
 
-% consider steric interactions if StericFlag is true & WTSteric is not an
-% input
-if StericFlag && nargin<12
+% Consider LacNAc length (the last variable)
+TM(AllrxnList_LacNAcLen_idx)  = TM(AllrxnList_LacNAcLen_idx)./exp(scales(end).*AllrxnList_LacNAcLen);
+
+%% Consider steric interactions 
+if StericFlag && isempty(WTSteric)
     for k = length(Rxn_idx)+4:length(Geneidx)
         TM(Geneidx{k}) = (1./exp(AllrxnList_steric(Geneidx{k}).*scales(k-3))).*TM(Geneidx{k});
     end
 end
 
 % apply existing steric factors from fitted WT models
-if StericFlag && nargin == 12
+if StericFlag && ~isempty(WTSteric)
     count = 1;
     for k = length(Rxn_idx)+4:length(Geneidx)
         TM(Geneidx{k}) = (1./exp(AllrxnList_steric(Geneidx{k}).*WTSteric(count))).*TM(Geneidx{k});
@@ -36,11 +38,14 @@ if ~isempty(mzRes)
     Predata = cellfun(@(x) sum(Predata_raw(x)),AbsGlyIdx);
 end
 
+%% Process leakage signals
+leakage = 1-sum(Predata_noRes);
+
 %% Compute objective function
 if ~isempty(mzRes)
-    error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData-Predata).^2))./sqrt(length(ExpData));
+    error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData(mzRes)-Predata(mzRes)).^2)+ leakage.^2)./sqrt(length(ExpData));
 else
-    error = sum((ExpData-Predata_noRes).^2)./sqrt(length(ExpData));
+    error = (sum((ExpData-Predata_noRes).^2) + leakage.^2)./sqrt(length(ExpData));
 end
 
 end

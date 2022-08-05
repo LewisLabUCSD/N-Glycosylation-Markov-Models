@@ -28,6 +28,10 @@ for a = 1:length(AllResults)
    end
 end
 
+removeOutlierFlag = true;
+Method = 'KernalDensity';
+combResults = FilterOptimizationResults('WT', combResults, Method, removeOutlierFlag);
+
 WTSteric = mean(combResults.WT.xval(find(~isoutlier(combResults.WT.fval)),end-length(combResults.WT.OptimizationProblem.stericRxns)+1:end),1);
 
 end

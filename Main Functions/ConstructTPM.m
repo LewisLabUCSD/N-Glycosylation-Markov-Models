@@ -1,4 +1,4 @@
-function  [TM, AllrxnList_TMidx, AllrxnList_Br, AllrxnList_RxnTypes, RxnTypes,AllrxnList_steric,stericRxns] = ConstructTPM(AllrxnList,Glys)
+function  [TM, AllrxnList_TMidx, AllrxnList_Br, AllrxnList_RxnTypes, RxnTypes,AllrxnList_steric,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx] = ConstructTPM(AllrxnList,Glys)
 
 fprintf('Construct Transition Probability Matrix from the generic N-glycosylation network...\n');
 
@@ -8,6 +8,7 @@ AllrxnList_TMrow = zeros(size(AllrxnList,1),1);
 AllrxnList_TMcol = AllrxnList_TMrow;
 AllrxnList_Br = AllrxnList_TMrow;
 AllrxnList_steric = AllrxnList_TMrow;
+AllrxnList_LacNAcLen = AllrxnList_TMrow;
 
 % List reactions to consider steric interactions
 stericRxns =  {'a3SiaT','b4GalT','iGnT','GnTIV','GnTV'};
@@ -33,6 +34,12 @@ parfor k = 1:size(AllrxnList,1)
 
     AllrxnList_TMrow(k) = find(strcmp(Glys,[Rct,comp1]),1);
     AllrxnList_TMcol(k) = find(strcmp(Glys,[Pro,comp2]),1);
+
+    if strcmp(RxnType,'iGnT')
+        [~,~,Rctbranches] = IdentifyEndMoiety(Rct);
+        [~,~,Probranches] = IdentifyEndMoiety(Pro);
+        AllrxnList_LacNAcLen(k) = length(strfind(Rctbranches{~strcmp(Rctbranches,Probranches)},'Ab4GNb3'));
+    end
 
     % Distinguish branches and identify steric hindrance for
     % 'a3SiaT','b4GalT', 'iGnT','GnTIV', & 'GnTV')
@@ -77,6 +84,8 @@ TM = sparse(TM./(sum(TM,2)));
 
 % linear indice for each reaction
 AllrxnList_TMidx = sub2ind(size(TM),AllrxnList_TMrow,AllrxnList_TMcol);
+AllrxnList_LacNAcLen_idx = AllrxnList_TMidx(AllrxnList_LacNAcLen~=0);
+AllrxnList_LacNAcLen = AllrxnList_LacNAcLen(AllrxnList_LacNAcLen~=0);
 
 % AllrxnList_RxnTypes & RxnTypes
 AllrxnList_RxnTypes = AllrxnList(:,3);

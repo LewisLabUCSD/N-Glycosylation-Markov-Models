@@ -1,4 +1,4 @@
-function RandomResults = GenerateRandomModels(Prof,GenericNetwork,DataSet,OptimizationResults,simNum)
+function OptimizationResults = GenerateRandomModels(Prof,GenericNetwork,DataSet,OptimizationResults,simNum)
 %% Prepare fitted variables/experimental for computing model characteristics
 
 %%%%%%%%%%%%%%%%%%%%% Extract experimental data %%%%%%%%%%%%%%%%%%%%%
@@ -11,6 +11,9 @@ StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag;
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
 Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
+AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
+AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
+LacNAcLenPenalty = rand([simNum,1])*6;
 
 %% Apply each set of fitted transition probabilities to compute model characteristics
 
@@ -36,9 +39,9 @@ Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
 % 8. Rxn_flux: the edge list (reactant, product) representing the network
 % reactions corresponding to the fluxes in PseudoFlux
 
-for a = 1:size(xval,1)
+for a = 1:simNum
     
-    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns);
+    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty(a));
     
     % Initiate variables
     if a == 1
@@ -60,4 +63,6 @@ RandomResults.AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStr
 RandomResults.AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 RandomResults.mz_all = DataSet.mz_all; 
 RandomResults.xval = xval;
+RandomResults.LacNAcLenPenalty = LacNAcLenPenalty;
+OptimizationResults.(Prof).RandomResults = RandomResults;
 end

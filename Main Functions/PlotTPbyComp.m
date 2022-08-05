@@ -1,7 +1,8 @@
 function [data,xval_tot]= PlotTPbyComp(ProfSel,OptimizationResults,GenericNetwork)
 
 % load data
-xval_tot = OptimizationResults.(ProfSel).xval(~isoutlier(OptimizationResults.(ProfSel).fval),:);
+xval_tot = OptimizationResults.(ProfSel).xval;
+LacNAcLenPenalty =  OptimizationResults.(ProfSel).LacNAcLenPenalty;
 RxnTypes = GenericNetwork.RxnTypes;
 RxnTypes_noBr = cellfun(@(x) regexprep(x,'\_B\d',''),RxnTypes,'UniformOutput',0);
 AllrxnList = GenericNetwork.AllrxnList;
@@ -41,11 +42,15 @@ data = median(xval_tot,1);
 figure
 hold on
 for k = 1:length(Comp)
-    
+
     subplot(1,length(Comp),k)
     hold on
-    boxplot(xval_tot(:,sets{k}),'Colors',[42 128 185]./255,'Symbol','ro','OutlierSize',2,'MedianStyle','target');
-    
+    if size(xval_tot,1)>1
+        boxplot(xval_tot(:,sets{k}),'Colors',[42 128 185]./255,'Symbol','ro','OutlierSize',2,'MedianStyle','target');
+    else
+        stem(1:length(sets{k}),xval_tot(:,sets{k}));
+    end
+
     ylabel('Log10 Relative Transition Probabilities');
     if strcmp(Comp{k},'[SF]')
         xticks(1:length(stericRxns));
@@ -60,11 +65,11 @@ for k = 1:length(Comp)
     set(gca,'fontweight','bold')
     set(gca,'TickLength',[0 0]);
     hold off
-    
+
 end
 hold off
 
-sgtitle(['Transition Probabilities by Compartment (',ProfSel,')']);
+sgtitle({['Transition Probabilities by Compartment (',ProfSel,')'], sprintf('(LacNAc Length Penalty = %0.1e)',mean(LacNAcLenPenalty))});
 hold off
 
 
