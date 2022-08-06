@@ -131,6 +131,7 @@ hold on
 h = plot(G,'LayOut','layered');
 h.EdgeColor = '#ecf0f1';
 h.NodeColor = '#bec3c7';
+h.NodeLabel = {};
 
 %%%%%%%%%%%%%%%%%%%%%%%% Plot trimmed network %%%%%%%%%%%%%%%%%%%%%%%%
 if nargin ~=4
@@ -186,6 +187,7 @@ for a = 1:length(AllPaths)
 end
 h.MarkerSize = NodeWt;
 title('Trimmed Network');
+h.NodeLabel = {};
 set(gca,'xtick',[]);set(gca,'ytick',[]);
 hold off
 

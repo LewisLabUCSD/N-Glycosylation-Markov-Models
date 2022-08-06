@@ -7,7 +7,7 @@ AbsGlyIdx = GenericNetwork.AbsGlyIdx;
 Glys = GenericNetwork.Glys;
 
 % sort and select data
-[~,idx] = sort(Predata_raw,'descend');
+[~,idx] = sort(mean(Predata_raw,1),'descend');
 Predata_raw = Predata_raw(:,idx(1:TopSel));
 Glys_raw = Glys_raw(idx(1:TopSel));
 Predata_raw_mean = mean(Predata_raw,1)';

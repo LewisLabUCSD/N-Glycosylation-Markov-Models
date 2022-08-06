@@ -1,4 +1,4 @@
-function AbsGlyIdx = GenerateAbsGlyIdx(NT, AbsGlys, composition,mz_all)
+function [AbsGlyIdx,LeakageGlyIdx] = GenerateAbsGlyIdx(NT, AbsGlys, composition,mz_all)
 
 % add up same monosaccharide types
 generaltypes = {'Hex','HexNAc','NeuAc','dHex'}; % col
@@ -72,5 +72,14 @@ for k1 = 1:length(AbsGlys)
 end
 [~,Locb] = ismember(composition_monoCounts_pre,composition_monoCounts_exp,'rows');
 AbsGlyIdx = arrayfun(@(x) find(Locb == x)+NT,(1:length(mz_all))','UniformOutput',0);
+
+% Identify leakage compositions
+Locd = ~Locb;
+leakageComposition = unique(composition_monoCounts_pre(Locd,:),'rows');
+LeakageGlyIdx = cell(size(leakageComposition,1),1);
+for a = 1:size(leakageComposition,1)
+    [~,Loc] = ismember(composition_monoCounts_pre,leakageComposition(a,:),'rows');
+    LeakageGlyIdx{a} = find(Loc)+NT;
+end
 
 end

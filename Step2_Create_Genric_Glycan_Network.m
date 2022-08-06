@@ -104,7 +104,7 @@ pi0_T = pi0(1:NT); % initial distribution state for all the glycans in the Marko
 % indices in the variable Glys are listed in the corresponding cell.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-AbsGlyIdx = GenerateAbsGlyIdx(NT, AbsGlys, DataSet.compositions, DataSet.mz_all);
+[AbsGlyIdx,LeakageGlyIdx] = GenerateAbsGlyIdx(NT, AbsGlys, DataSet.compositions, DataSet.mz_all);
 
 %% Save the generic model
 GenericNetwork = ws2struct; 

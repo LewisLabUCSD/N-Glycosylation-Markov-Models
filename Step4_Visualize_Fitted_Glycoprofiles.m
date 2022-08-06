@@ -31,10 +31,10 @@ for a = 1:length(ProfSel)
     % 3. Method: the following methods are available:
     %   a. 'KernalDensity': normal kernel functions are used to estimate
     %   the probability density of the errors of the objective functions
-    %   (fval). The maxima of the smoothed probability density are identified
-    %   based on prominence (https://www.mathworks.com/help/signal/ug/prominence.html).
+    %   (fval). The maxima or inflection points of the smoothed probability density are identified
+    %   based on prominence and secondary differentials (https://www.mathworks.com/help/signal/ug/prominence.html).
     %   The fval will be clustered based on their absolute difference from
-    %   these maxima. The cluster with the smallest average errors of the
+    %   these selected points. The cluster with the smallest average errors of the
     %   objective functions will be selected for further analyses. This is
     %   the default method.
     %   b. 'Outlier': samples with ourlier fvals are filtered out. Outliers
@@ -89,7 +89,7 @@ for a = 1:length(ProfSel)
 
     simNum = 20;
     OptimizationResults = ComputeFittedModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults);
-    OptimizationResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
+    % OptimizationResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
 
     %% Step 4c. visualize fitted transition probabilities
     % [xval_media,xval]= PlotTPbyComp(ProfSel{a},OptimizationResults);
@@ -158,8 +158,8 @@ for a = 1:length(ProfSel)
 
     %%%%%%%%%%%%%%%%%%%%%%%%% Identify and List Top glycans %%%%%%%%%%%%%%%%%%%%%%%%%
     % Print the top 20 glycans to the command window
-%     TopSel = 40;
-%     OptimizationResults.(ProfSel{a}).GlycoformList = ListTopGlycans(ProfSel{a},OptimizationResults,GenericNetwork,TopSel);
+    TopSel = 30;
+    OptimizationResults.(ProfSel{a}).GlycoformList = ListTopGlycans(ProfSel{a},OptimizationResults,GenericNetwork,TopSel);
 
     %% Step 4f. visualize model pseudo-fluxes of fitted glycoprofiles
     % [plotData,plotErr] = PlotPredVsExp(ProfSel{a},OptimizationResults);
@@ -195,7 +195,7 @@ for a = 1:length(ProfSel)
     %%%%%%%%%%%%%%%%%%%%%%%%% Trace the synthetic pathway of a glycan %%%%%%%%%%%%%%%%%%%%%%%%%
     % You may trace the synthetic path leading to a specific glycan by using the
     % function:
-    startGly = '(Ab4GNb2(Ab4GNb4)Ma3(Ab4GNb2(Ab4GNb3Ab4GNb6)Ma6)Mb4GNb4(Fa6)GN);Asn' ;
+    startGly = '(Ab4GNb2(Ab4GNb4)Ma3(Ab4GNb2(Ab4GNb6)Ma6)Mb4GNb4(Fa6)GN);Asn' ;
     TraceGlycanSynNetwork(ProfSel{a},GenericNetwork,OptimizationResults,startGly);
 
     % startGly is the string of the starting glycan you would like to

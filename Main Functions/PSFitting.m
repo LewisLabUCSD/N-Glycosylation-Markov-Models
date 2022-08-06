@@ -1,4 +1,4 @@
-function error = PSFitting(scales,TM,Geneidx,Rxn_idx,AbsGlyIdx,ExpData,pi0,mzRes,linkagePosRes,StericFlag,AllrxnList_steric,WTSteric,AllrxnList_LacNAcLen_idx,AllrxnList_LacNAcLen)
+function error = PSFitting(scales,TM,Geneidx,Rxn_idx,AbsGlyIdx,LeakageGlyIdx,ExpData,pi0,mzRes,linkagePosRes,StericFlag,AllrxnList_steric,WTSteric,AllrxnList_LacNAcLen_idx,AllrxnList_LacNAcLen)
 %% Modify transition probability matrix based on the fed scaling factor
 
 % scale rxns
@@ -39,13 +39,13 @@ if ~isempty(mzRes)
 end
 
 %% Process leakage signals
-leakage = 1-sum(Predata_noRes);
+leakage = cellfun(@(x) sum(Predata_raw(x)),LeakageGlyIdx);
 
 %% Compute objective function
 if ~isempty(mzRes)
-    error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData(mzRes)-Predata(mzRes)).^2)+ leakage.^2)./sqrt(length(ExpData));
+    error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData(mzRes)-Predata(mzRes)).^2)+ sum(leakage.^2))./sqrt(length(ExpData));
 else
-    error = (sum((ExpData-Predata_noRes).^2) + leakage.^2)./sqrt(length(ExpData));
+    error = (sum((ExpData-Predata_noRes).^2) +  sum(leakage.^2))./sqrt(length(ExpData));
 end
 
 end

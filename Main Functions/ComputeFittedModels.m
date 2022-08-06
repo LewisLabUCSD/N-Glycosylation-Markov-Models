@@ -38,10 +38,13 @@ AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
 % 8. Rxn_flux: the edge list (reactant, product) representing the network
 % reactions corresponding to the fluxes in PseudoFlux
 
+TM_avg = 0;
+
 for a = 1:size(xval,1)
     
-    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty(a));
-    
+    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux,TM] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty(a));
+    TM_avg = TM_avg+TM;
+
     % Initiate variables
     if a == 1
     OptimizationResults.(Prof).error = error;OptimizationResults.(Prof).Predata_noRes = Predata_noRes';OptimizationResults.(Prof).Predata_raw = Predata_raw;OptimizationResults.(Prof).Glys_raw = Glys_raw;
@@ -56,10 +59,13 @@ for a = 1:size(xval,1)
     end
 end
 
+TM_avg = TM_avg./size(xval,1);
+
 % Record experimental info
 OptimizationResults.(Prof).ExpData = ExpData';
 OptimizationResults.(Prof).AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).mz_all = DataSet.mz_all; 
+OptimizationResults.(Prof).TM_avg = TM_avg;
 
 end

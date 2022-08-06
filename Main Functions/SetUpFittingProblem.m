@@ -13,6 +13,7 @@ AllrxnList_steric = GenericNetwork.AllrxnList_steric;
 stericRxns = GenericNetwork.stericRxns;
 AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
 AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
+LeakageGlyIdx = GenericNetwork.LeakageGlyIdx;
 
 %%%%%%%%%%%%%%%%%%%%% Initiate temporary variables for storing fitting results %%%%%%%%%%%%%%%%%%%%%
 % steric interactions
@@ -35,6 +36,7 @@ fval = zeros(num,1);
 % (RxyTypes) is in the range of 10^[-4,4].
 Rxn_idx = find(~ismember(GenericNetwork.RxnTypes,{'cg2mg','mg2tg','tg2ab'}));
 optimproblem.x0 = 16*rand(1,size(xval,2)-3+1)-8;
+% optimproblem.x0 = ones(1,size(xval,2)-3+1).*8;
 optimproblem.lb = ones(1,size(xval,2)-3+1).*-8;
 if StericFlag && ~UseWTStericFlag
     optimproblem.lb(end-length(stericRxns)+1:end-1) = 0;
@@ -73,7 +75,7 @@ if strcmp(Method,'PatternSearch')
         'MaxFunctionEvaluations',20000*length(optimproblem.x0),...
         'SearchFcn','GSSPositiveBasis2N',... % GSSPositiveBasisNp1 MADSPositiveBasis2N MADSPositiveBasisNp1 searchlhs searchga searchneldermead
         'PollMethod','MADSPositiveBasis2N',...
-		'UseParallel',true,...
+        'UseParallel',true,...
         'PlotFcn',{'psplotbestf','psplotbestx'});
 
 elseif strcmp(Method,'PSPSHybrid')
@@ -96,6 +98,7 @@ elseif strcmp(Method,'PSPSHybrid')
         'MaxIterations',5000,...
         'MaxFunctionEvaluations',8000*length(optimproblem.x0),...
         'SearchFcn','GSSPositiveBasis2N',... % GSSPositiveBasisNp1 MADSPositiveBasis2N MADSPositiveBasisNp1 searchlhs searchga searchneldermead
+        'PollMethod','MADSPositiveBasis2N',...
         'UseParallel',true,...
         'PlotFcn',{'psplotbestf','psplotbestx'});
 
@@ -129,7 +132,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Set up objective function
-optimproblem.objective  = @(x) PSFitting(x,TM,Geneidx,Rxn_idx,AbsGlyIdx,ExpData,pi0,mzRes,linkagePosRes,StericFlag,AllrxnList_steric,WTSteric,AllrxnList_LacNAcLen_idx,AllrxnList_LacNAcLen);
+optimproblem.objective  = @(x) PSFitting(x,TM,Geneidx,Rxn_idx,AbsGlyIdx,LeakageGlyIdx,ExpData,pi0,mzRes,linkagePosRes,StericFlag,AllrxnList_steric,WTSteric,AllrxnList_LacNAcLen_idx,AllrxnList_LacNAcLen);
 
 %% Record the optimization problem setting
 OptimizationProblem.optimproblem = optimproblem;

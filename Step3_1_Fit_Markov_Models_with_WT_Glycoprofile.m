@@ -19,7 +19,7 @@ OptimizationResults = struct;
 % Each selected glycoprofiles is fitted sequentially
 for a = 1:length(ProfSel)
 
-    num = 6; % Number of models fitted for each profile
+    num = 2; % Number of models fitted for each profile
 
     for k = 1:num
 
@@ -87,4 +87,4 @@ for a = 1:length(ProfSel)
 end
 
 %% Step 3c. Store the fitting result
-save('Data/OptimizationResults/OptimizationResults_WT_49.mat','OptimizationResults');
+save('Data/OptimizationResults/OptimizationResults_WT_41.mat','OptimizationResults');

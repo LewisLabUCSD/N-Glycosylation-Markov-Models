@@ -31,6 +31,7 @@ for a = 1:length(AllResults)
         else
             combResults.(fdNames{b}).xval = [combResults.(fdNames{b}).xval;optstruct.(fdNames{b}).xval];
             combResults.(fdNames{b}).fval = [combResults.(fdNames{b}).fval;optstruct.(fdNames{b}).fval];
+            combResults.(fdNames{b}).LacNAcLenPenalty = [combResults.(fdNames{b}).LacNAcLenPenalty;optstruct.(fdNames{b}).LacNAcLenPenalty];
         end
     end
 end
