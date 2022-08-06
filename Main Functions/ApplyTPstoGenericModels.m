@@ -13,7 +13,7 @@ AllrxnList_steric = GenericNetwork.AllrxnList_steric;
 
 % scale rxns
 for k = 1:length(Rxn_idx)
-    TM(Geneidx{k}) = (10.^scales(k)).*TM(Geneidx{k});
+    TM(Geneidx{Rxn_idx(k)}) = (10.^scales(k)).*TM(Geneidx{Rxn_idx(k)});
 end
 
 % Consider LacNAc length (the last variable)
