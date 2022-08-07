@@ -9,7 +9,7 @@ load GenericNetwork.mat;
 OptimizationResults = LoadOptimizationResults({'OptimizationResults_WT','OptimizationResults_others'});
 
 % Select the profiles to visualize
-ProfSel = {'St3gal4'}; %fieldnames(OptimizationResults);
+ProfSel = {'WT'}; %fieldnames(OptimizationResults);
 
 % Visualize fitted model results for each selected profiles, sequentially
 % Progress bar
@@ -87,9 +87,9 @@ for a = 1:length(ProfSel)
     %    i. AnnotatedMz: m/z values with annotations
     %    j. AnnotedGlycans: glycan annotations at the annotated m/z values
 
-    simNum = 20;
+    simNum = 15;
     OptimizationResults = ComputeFittedModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults);
-    % OptimizationResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
+    OptimizationResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
 
     %% Step 4c. visualize fitted transition probabilities
     % [xval_media,xval]= PlotTPbyComp(ProfSel{a},OptimizationResults);
