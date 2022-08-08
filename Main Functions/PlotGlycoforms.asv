@@ -36,10 +36,12 @@ for a = 1:length(AbsGlys)
         plotData{a} = 0;
     else
         plotData{a} = [plotData{a}{:}];
-        plotData_norm{a} = plotData{a}./sum(plotData{a});
+        plotData_norm(a) = mean(plotData{a});
     end
     end
 end
+plotData_norm = cellfun(@(x) x./sum(x), plotData);
+plotData_norm(isnan(plotData_norm)) = 0;
 
 % Only plot glycoforms with signals > threshold
 for a = 1:length(AbsGlyIdx)

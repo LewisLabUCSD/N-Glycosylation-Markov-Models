@@ -11,8 +11,6 @@ StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag;
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
 Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
-AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
-AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
 
 %% Apply each set of fitted transition probabilities to compute model characteristics
 
@@ -42,7 +40,7 @@ TM_avg = 0;
 
 for a = 1:size(xval,1)
     
-    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux,TM] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty(a));
+    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux,TM] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,LacNAcLenPenalty(a));
     TM_avg = TM_avg+TM;
 
     % Initiate variables
@@ -61,7 +59,7 @@ end
 
 TM_avg = TM_avg./size(xval,1);
 
-% Record experimental info
+% Record info
 OptimizationResults.(Prof).ExpData = ExpData';
 OptimizationResults.(Prof).AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));

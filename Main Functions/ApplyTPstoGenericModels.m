@@ -1,4 +1,5 @@
-function [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux,TM] = ApplyTPstoGenericModels(scales,Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty)
+function [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux,TM] = ApplyTPstoGenericModels(scales,Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,LacNAcLenPenalty)
+
 %% Extract variables
 TM = GenericNetwork.TM;
 Geneidx = GenericNetwork.Geneidx;
@@ -8,8 +9,11 @@ pi0 = GenericNetwork.pi0;
 TMidx = GenericNetwork.AllrxnList_TMidx;
 [TMrow,TMcol] = ind2sub(size(TM),TMidx);
 AllrxnList_steric = GenericNetwork.AllrxnList_steric;
+AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
+AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
 
 %% Modify transition probability matrix based on the fed scaling factor
+scales = scales(Rxn_idx);
 
 % scale rxns
 for k = 1:length(Rxn_idx)

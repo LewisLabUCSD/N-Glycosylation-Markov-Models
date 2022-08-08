@@ -11,8 +11,6 @@ StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag;
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
 Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
-AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
-AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
 LacNAcLenPenalty = rand([simNum,1])*6;
 
 %% Apply each set of fitted transition probabilities to compute model characteristics
@@ -41,7 +39,7 @@ LacNAcLenPenalty = rand([simNum,1])*6;
 
 for a = 1:simNum
     
-    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,LacNAcLenPenalty(a));
+    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,LacNAcLenPenalty(a));
     
     % Initiate variables
     if a == 1
