@@ -9,7 +9,7 @@ load GenericNetwork.mat;
 OptimizationResults = LoadOptimizationResults({'OptimizationResults_WT','OptimizationResults_others'});
 
 % Select the profiles to visualize
-ProfSel = {'Mgat2'}; %fieldnames(OptimizationResults);
+ProfSel = fieldnames(OptimizationResults);
 
 % Visualize fitted model results for each selected profiles, sequentially
 % Progress bar

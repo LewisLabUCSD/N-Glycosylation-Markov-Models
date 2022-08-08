@@ -7,17 +7,17 @@ ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 %%%%%%%%%%%%%%%%%%%%% Eliminate models with outlier errors %%%%%%%%%%%%%%%%%%%%%
 flag = ~isoutlier(OptimizationResults.(Prof).fval);
 xval = OptimizationResults.(Prof).xval(flag,:);
-if nargin == 5
-    UseNumofSamples = min([UseNumofSamples size(xval,1)]);
-    xval = xval(randi(size(xval,1),1,UseNumofSamples),:);
-end
 StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag;
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
 Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
-AllrxnList_LacNAcLen = GenericNetwork.AllrxnList_LacNAcLen;
-AllrxnList_LacNAcLen_idx = GenericNetwork.AllrxnList_LacNAcLen_idx;
 LacNAcLenPenalty = OptimizationResults.(Prof).LacNAcLenPenalty;
+if nargin == 5
+    randSel = randi(size(xval,1),1,UseNumofSamples);
+    UseNumofSamples = min([UseNumofSamples size(xval,1)]);
+    xval = xval(randSel,:);
+    LacNAcLenPenalty = LacNAcLenPenalty(randSel,:);
+end
 
 %% Defined perturbation percentage
 % only perturb actual reactions
@@ -40,7 +40,7 @@ for k1 = 1:length(RxnNames)
         errorVec = zeros(size(xval_temp,1),1);
         
         parfor a = 1:size(xval_temp,1)           
-            [errorVec(a)] = ApplyTPstoGenericModels(xval_temp(a,1:end-1),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,AllrxnList_LacNAcLen,AllrxnList_LacNAcLen_idx,xval_temp(a,end));
+            [errorVec(a)] = ApplyTPstoGenericModels(xval_temp(a,1:end-1),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,xval_temp(a,end));
         end
         
         errorMat(k1,k2) = mean(errorVec);
