@@ -11,9 +11,9 @@ if strcmp(Method,'KernalDensity') && size(xval,1)>1
     
     % compute the number of points (resolution) for kernal smoothing
     % estimation
-    Num = max(abs(diff(fval)))/min(abs(diff(fval)));
-    if Num>3000
-        Num = 3000;
+    Num = max(abs(diff(fval)))/min(abs(diff(fval)))*10;
+    if Num>7000
+        Num = 7000;
     end
 
     [f,xi] = ksdensity(fval,'NumPoints',Num);
@@ -21,14 +21,14 @@ if strcmp(Method,'KernalDensity') && size(xval,1)>1
     TF = xi(TF(2:end-1));
 
     % Find inflection points
-%     f2= diff(diff(f));
-%     infpoint = [];
-%     for a = 1:length(f2)-1
-%         if f2(a)<=0 && f2(a+1)>0
-%             infpoint = [infpoint,xi(a)];
-%         end
-%     end
-%     TF = sort([TF,infpoint]);
+    f2= diff(diff(f));
+    infpoint = [];
+    for a = 1:length(f2)-1
+        if f2(a)<=0 && f2(a+1)>0
+            infpoint = [infpoint,xi(a)];
+        end
+    end
+    TF = sort([TF,infpoint]);
 
     % cluster fvals based on distance to maxima and inflection points
     clusters = zeros(size(fval));
