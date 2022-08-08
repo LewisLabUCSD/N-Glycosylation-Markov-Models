@@ -64,6 +64,6 @@ OptimizationResults.(Prof).ExpData = ExpData';
 OptimizationResults.(Prof).AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 OptimizationResults.(Prof).mz_all = DataSet.mz_all; 
-OptimizationResults.(Prof).TM_avg = TM_avg;
+OptimizationResults.(Prof).TM_avg = sparse(TM_avg);
 
 end
