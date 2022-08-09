@@ -108,4 +108,4 @@ pi0_T = pi0(1:NT); % initial distribution state for all the glycans in the Marko
 
 %% Save the generic model
 GenericNetwork = ws2struct; 
-save('Data\GenericNetwork.mat','GenericNetwork');
+save('Data/GenericNetwork.mat','GenericNetwork');

@@ -10,7 +10,7 @@ PseudoFlux = mean(OptimizationResults.(Prof).PseudoFlux,1);
 Rxn_flux = OptimizationResults.(Prof).Rxn_flux;  
 Rxn_flux(:,1) = cellfun(@(x) x(1:end-4),Rxn_flux(:,1),'UniformOutput',false);
 Rxn_flux(:,2) = cellfun(@(x) x(1:end-4),Rxn_flux(:,2),'UniformOutput',false);
-TM_avg = OptimizationResults.(Prof).TM_avg;
+TM_avg = full(OptimizationResults.(Prof).TM_avg);
 AllrxnList_TMidx = GenericNetwork.AllrxnList_TMidx;
 AllrxnList  = GenericNetwork.AllrxnList  ;
 
