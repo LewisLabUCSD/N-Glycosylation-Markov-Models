@@ -9,7 +9,7 @@ load GenericNetwork.mat;
 OptimizationResults = LoadOptimizationResults({'OptimizationResults_WT','OptimizationResults_others'});
 
 % Select the profiles to visualize
-ProfSel = {'St3gal6'};% fieldnames(OptimizationResults);
+ProfSel = {'St3gal6'}; %fieldnames(OptimizationResults);
 
 % Visualize fitted model results for each selected profiles, sequentially
 % Progress bar
@@ -127,7 +127,7 @@ for a = 1:length(ProfSel)
     % Each row represents a fitted model and each column represents a
     % specific m/z.
 
-    OptimizationResults.(ProfSel{a}).ExpVsPredData = PlotPredVsExp(ProfSel{a},OptimizationResults,25);
+    OptimizationResults.(ProfSel{a}).ExpVsPredData = PlotPredVsExp(ProfSel{a},OptimizationResults,50);
 
     %% Step 4e. visualize glycoform ratios for each m/z
     % GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, 0.001);

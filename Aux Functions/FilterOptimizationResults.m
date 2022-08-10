@@ -21,14 +21,14 @@ if strcmp(Method,'KernalDensity') && size(xval,1)>1
     TF = xi(TF(2:end-1));
 
     % Find inflection points
-%     f2= diff(diff(f));
-%     infpoint = [];
-%     for a = 1:length(f2)-1
-%         if f2(a)<=0 && f2(a+1)>0
-%             infpoint = [infpoint,xi(a)];
-%         end
-%     end
-%     TF = sort([TF,infpoint]);
+    f2= diff(diff(f));
+    infpoint = [];
+    for a = 1:length(f2)-1
+        if f2(a)<=0 && f2(a+1)>0
+            infpoint = [infpoint,xi(a)];
+        end
+    end
+    TF = sort([TF,infpoint]);
 
     % cluster fvals based on distance to maxima and inflection points
     clusters = zeros(size(fval));

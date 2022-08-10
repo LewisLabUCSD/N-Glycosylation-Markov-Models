@@ -43,7 +43,7 @@ leakage =  1- sum(Predata_noRes);% cellfun(@(x) sum(Predata_raw(x)),LeakageGlyId
 
 %% Compute objective function
 if ~isempty(mzRes)
-    error = (sum((ExpData-Predata_noRes).^2) + sum((ExpData-Predata).^2)+ sum(leakage.^2))./sqrt(length(ExpData));
+    error = (sum(((ExpData-Predata_noRes)).^2) + sum(((ExpData-Predata)).^2)+ sum(leakage.^2))./sqrt(length(ExpData));
 else
     error = (sum((ExpData-Predata_noRes).^2) +  sum(leakage.^2))./sqrt(length(ExpData));
 end
