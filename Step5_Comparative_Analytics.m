@@ -63,3 +63,5 @@ for a = 1:length(ProfSel)
             CompareTPandPseudoFlux(ProfSel{a}, ComparisonProf1,OptimizationResults,GenericNetwork);
     end
 end
+
+save('Data/ComparativeResults.mat',"ComparativeResults");
