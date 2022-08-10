@@ -4,6 +4,7 @@ ExpData = OptimizationResults.(ProfSel).ExpData;
 PreData = OptimizationResults.(ProfSel).Predata_noRes;
 mz_all = OptimizationResults.(ProfSel).mz_all;
 errors = OptimizationResults.(ProfSel).error;
+leakage = mean(1-sum(PreData,2));
 
 %% Select the top number of signals to plot
 % numSel: number of top peaks selected (based on the values from
@@ -25,10 +26,6 @@ mz_temp = mz_all(selIdx);
 
 
 %% Plot experimental vs. prediction glycoprofile
-
-% Compute average leakage
-leakage = mean(1-sum(PreData_temp,2));
-
 
 % prep plotting data
 plotPreData = mean(PreData_temp,1);
@@ -72,7 +69,7 @@ xticks(1:length(mz_temp));
 xticklabels(round(mz_temp));
 xlabel('m/z');
 ylabel('Relative Intensity');
-title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (RMSE = %0.2e, leakage = %0.2f)'],mean(errors),leakage));
+title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (RMSE = %0.2e, leakage = %0.2e)'],mean(errors),leakage));
 set(gca,'fontweight','bold')
 set(gca,'TickLength',[0 0]);
 hold off

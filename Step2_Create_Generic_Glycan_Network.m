@@ -32,7 +32,7 @@ load Data.mat
 % distinguished by Golgi compartments and absorption state ("secreted").
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 N = 23;
-RxnSel = {'N/A' 'ManI' 'ManII' 'GnTI' 'GnTII' 'GnTIV' 'GnTV' 'a6FucT' 'b4GalT' 'a3SiaT' 'iGnT'};
+RxnSel = {'N/A' 'ManI' 'ManII' 'GnTI' 'GnTII' 'GnTIV_I' 'GnTV_I' 'GnTIV_II' 'GnTV_II' 'a6FucT' 'b4GalT' 'a3SiaT' 'iGnT'};
 [AllrxnList,Glys] = CreateGlycanRxnList(N,RxnSel);
 
 %% Step 2b. Construct Transition Probability Matrix (TPM) from the generic N-glycosylation network

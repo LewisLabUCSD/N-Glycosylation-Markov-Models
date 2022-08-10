@@ -3,13 +3,10 @@ close all;clc;clear;
 addpath('Aux Functions','Main Functions','Data','Data/OptimizationResults');
 load Data.mat;
 load GenericNetwork.mat;
-% load all optimization results and combine them together. the string input
-% should be a cell vector of the file name strings excluding the last underscore and the number
-% (_#d).
-OptimizationResults = LoadOptimizationResults({'OptimizationResults_WT','OptimizationResults_others'});
+load ProcessedModels.mat;
 
 % Select the profiles to visualize
-ProfSel = {'St3gal6'}; %fieldnames(OptimizationResults);
+ProfSel = fieldnames(OptimizationResults);
 
 % Visualize fitted model results for each selected profiles, sequentially
 % Progress bar
@@ -127,7 +124,7 @@ for a = 1:length(ProfSel)
     % Each row represents a fitted model and each column represents a
     % specific m/z.
 
-    OptimizationResults.(ProfSel{a}).ExpVsPredData = PlotPredVsExp(ProfSel{a},OptimizationResults,50);
+    OptimizationResults.(ProfSel{a}).ExpVsPredData = PlotPredVsExp(ProfSel{a},OptimizationResults,60);
 
     %% Step 4e. visualize glycoform ratios for each m/z
     % GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, 0.001);

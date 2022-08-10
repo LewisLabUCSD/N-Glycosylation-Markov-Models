@@ -9,7 +9,7 @@ load GenericNetwork.mat
 % for detailed explanations. Specify the names of glycoprofiles to be
 % fitted. The names provided must be present in GenericNetwork.ProfNames.
 
-ProfSel  = {'St3gal6','B4galt1','WT'}; % a cell of strings of profile names selected to be fitted.
+ProfSel  = {'St3gal6'}; % a cell of strings of profile names selected to be fitted.
 
 %% Step 3b. Fit Markov models to glycoprofiles by stochastic global optimization
 
@@ -90,4 +90,4 @@ for a = 1:length(ProfSel)
 end
 
 %% Step 3c. Store the fitting result
-save('Data/OptimizationResults/OptimizationResults_others_test_2.mat','OptimizationResults');
+save('Data/OptimizationResults/OptimizationResults_others_2.mat','OptimizationResults');

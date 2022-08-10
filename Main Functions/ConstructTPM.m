@@ -11,7 +11,7 @@ AllrxnList_steric = AllrxnList_TMrow;
 AllrxnList_LacNAcLen = AllrxnList_TMrow;
 
 % List reactions to consider steric interactions
-stericRxns =  {'a3SiaT','b4GalT','iGnT','GnTIV','GnTV'};
+stericRxns =  {'GnTIV','GnTV','a3SiaT','b4GalT','iGnT'};
 % List reactions to consider branching
 branchingRxns = {'a3SiaT','b4GalT','iGnT'};
 

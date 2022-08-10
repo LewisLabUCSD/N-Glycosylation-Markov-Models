@@ -19,7 +19,7 @@ OptimizationResults = struct;
 % Each selected glycoprofiles is fitted sequentially
 for a = 1:length(ProfSel)
 
-    num = 1; % Number of models fitted for each profile
+    num = 5; % Number of models fitted for each profile
 
     for k = 1:num
 

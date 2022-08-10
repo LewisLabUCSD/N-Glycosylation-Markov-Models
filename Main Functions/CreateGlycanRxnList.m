@@ -7,8 +7,8 @@ end
 targetflag = true;
 
 % Enzyme localization (standard)
-Enzymes = {'N/A' 'ManI' 'ManII' 'GnTI' 'GnTII' 'GnTIV' 'GnTV' 'a6FucT' 'b4GalT' 'a3SiaT' 'iGnT' 'a6SiaT'};
-EnzLocs = {'N/A' '[cg]' '[mg]' '[cg]' '[mg]' '[mg]' '[tg]' '[mg]' '[tg]' '[tg]' '[tg]' '[tg]'};
+Enzymes = {'N/A' 'ManI' 'ManII' 'GnTI' 'GnTII' 'GnTIV' 'GnTV' 'GnTIV_I' 'GnTV_I' 'GnTIV_II' 'GnTV_II' 'a6FucT' 'b4GalT' 'a3SiaT' 'iGnT' 'a6SiaT'};
+EnzLocs = {'N/A' '[cg]' '[mg]' '[cg]' '[mg]' '[mg]' '[tg]' '[mg]' '[tg]' '[mg]' '[tg]' '[mg]' '[tg]' '[tg]' '[tg]' '[tg]'};
 [~,idx] = ismember(RxnSel,Enzymes);
 Enzymes = Enzymes(idx);EnzLocs = EnzLocs(idx);
 
@@ -231,17 +231,17 @@ while counter <= K && targetflag
     end
     
     
-    %% GnTIV
+    %% GnTIV_I
     %----------------------------------------------------
     % Identify glycotransferase features
-    Enzyme = 'GnTIV';
+    Enzyme = 'GnTIV_I';
     if any(strcmp(Enzyme,Enzymes))
         SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
-        SubstrateString = '\(GNb2Ma3'; SubstrateString_alt = '(GNb2Ma3';
+        SubstrateString = '\(GNb2Ma3(?=\(\w+Ma6\))'; SubstrateString_alt = '\(GNb2Ma3(?=\(\w+Ma6\))';
         ProductString = 'GNb2(GNb4)Ma3';
         
         % get corresponding substrates and add reactions
-        Reactants_temp = CurrentGlycans(cellfun(@(x) contains(x,SubstrateString_alt),CurrentGlycans));
+        Reactants_temp = CurrentGlycans(cellfun(@(x) any(regexp(x,SubstrateString_alt)),CurrentGlycans));
         
         if ~isempty(Reactants_temp)
             for k = 1:length(Reactants_temp)
@@ -263,19 +263,50 @@ while counter <= K && targetflag
         end
     end
     
-    
-    %% GnTV
+ %% GnTIV_II
     %----------------------------------------------------
     % Identify glycotransferase features
-    Enzyme = 'GnTV';
+    Enzyme = 'GnTIV_II';
     if any(strcmp(Enzyme,Enzymes))
         SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
-        SubstrateString = '\(GNb2Ma6'; SubstrateString_alt = '(GNb2Ma6';
+        SubstrateString = '\(GNb2Ma3(?=\(\w+\(\w+\)Ma6\))'; SubstrateString_alt = '\(GNb2Ma3(?=\(\w+\(\w+\)Ma6\))';
+        ProductString = 'GNb2(GNb4)Ma3';
+        
+        % get corresponding substrates and add reactions
+        Reactants_temp = CurrentGlycans(cellfun(@(x) any(regexp(x,SubstrateString_alt)),CurrentGlycans));
+        
+        if ~isempty(Reactants_temp)
+            for k = 1:length(Reactants_temp)
+                [startIndex,endIndex] = regexp(Reactants_temp{k},SubstrateString);
+                Reactants = repmat(Reactants_temp(k),length(startIndex),1);
+                Products = Reactants;
+                for k1 = 1:length(startIndex)
+                    Products{k1} = [Products{k1}(1:startIndex(k1)),ProductString,Products{k1}((endIndex(k1)+1):end)];
+                end
+                
+                
+                % document new glycan conversion
+                for a = 1:length(Reactants)
+                    % add new glycotransferase reaction
+                    RxnCounter = RxnCounter + 1;
+                    Rxns{RxnCounter,1} = Reactants{a};Rxns{RxnCounter,2} = Products{a};Rxns{RxnCounter,3} = Enzyme;Rxns{RxnCounter,4} = SubSystem;Rxns{RxnCounter,5} = counter;Rxns{RxnCounter,6} = ['GlyRxn_',num2str(RxnCounter)];
+                end
+            end
+        end
+    end
+        
+    %% GnTV_1
+    %----------------------------------------------------
+    % Identify glycotransferase features
+    Enzyme = 'GnTV_I';
+    if any(strcmp(Enzyme,Enzymes))
+        SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
+        SubstrateString = '(?<=\(\w+Ma3)\(GNb2Ma6'; SubstrateString_alt = '(?<=\(\w+Ma3)\(GNb2Ma6';
         ProductString = 'GNb2(GNb6)Ma6';
         
         % get corresponding substrates and add reactions
-        Reactants_temp = CurrentGlycans(cellfun(@(x) contains(x,SubstrateString_alt),CurrentGlycans));
-        % Reactants_temp = CurrentGlycans(ismember(CurrentGlycans,{'(GNb2(GNb4)Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(GNb2Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(Ma2Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(Ma2Ma2Ma3(GNb2Ma6)Mb4GNb4GN);Asn'}));
+ Reactants_temp = CurrentGlycans(cellfun(@(x) any(regexp(x,SubstrateString_alt)),CurrentGlycans));
+ % Reactants_temp = CurrentGlycans(ismember(CurrentGlycans,{'(GNb2(GNb4)Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(GNb2Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(Ma2Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(Ma2Ma2Ma3(GNb2Ma6)Mb4GNb4GN);Asn'}));
 
         if ~isempty(Reactants_temp)
             for k = 1:length(Reactants_temp)
@@ -296,6 +327,37 @@ while counter <= K && targetflag
         end
     end
     
+    %% GnTV_II
+    %----------------------------------------------------
+    % Identify glycotransferase features
+    Enzyme = 'GnTV_II';
+    if any(strcmp(Enzyme,Enzymes))
+        SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
+        SubstrateString = '(?<=\(\w+\(\w+\)Ma3)\(GNb2Ma6'; SubstrateString_alt = '(?<=\(\w+\(\w+\)Ma3)\(GNb2Ma6';
+        ProductString = 'GNb2(GNb6)Ma6';
+        
+        % get corresponding substrates and add reactions
+ Reactants_temp = CurrentGlycans(cellfun(@(x) any(regexp(x,SubstrateString_alt)),CurrentGlycans));
+ % Reactants_temp = CurrentGlycans(ismember(CurrentGlycans,{'(GNb2(GNb4)Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(GNb2Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(Ma2Ma3(GNb2Ma6)Mb4GNb4GN);Asn','(Ma2Ma2Ma3(GNb2Ma6)Mb4GNb4GN);Asn'}));
+
+        if ~isempty(Reactants_temp)
+            for k = 1:length(Reactants_temp)
+                [startIndex,endIndex] = regexp(Reactants_temp{k},SubstrateString);
+                Reactants = repmat(Reactants_temp(k),length(startIndex),1);
+                Products = Reactants;
+                for k1 = 1:length(startIndex)
+                    Products{k1} = [Products{k1}(1:startIndex(k1)),ProductString,Products{k1}((endIndex(k1)+1):end)];
+                end
+                
+                % document new glycan conversion
+                for a = 1:length(Reactants)
+                    % add new glycotransferase reaction
+                    RxnCounter = RxnCounter + 1;
+                    Rxns{RxnCounter,1} = Reactants{a};Rxns{RxnCounter,2} = Products{a};Rxns{RxnCounter,3} = Enzyme;Rxns{RxnCounter,4} = SubSystem;Rxns{RxnCounter,5} = counter;Rxns{RxnCounter,6} = ['GlyRxn_',num2str(RxnCounter)];
+                end
+            end
+        end
+    end
     %% b4GalT_1
     %----------------------------------------------------
     % Identify glycotransferase features

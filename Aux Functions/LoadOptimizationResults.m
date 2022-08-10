@@ -5,7 +5,7 @@ listing = dir('**/Data/OptimizationResults');
 names = {listing.name};
 names_all = {''};
 for a = 1:length(str)
-    names_temp = names(cellfun(@(x) ~isempty(regexp(x,[str{a},'\_\d*'],'once')), names));
+    names_temp = names(cellfun(@(x) ~isempty(regexp(x,[str{a},'\_\d+'],'once')), names));
     names_all = [names_all,names_temp];
 end
 names = names_all;
