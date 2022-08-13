@@ -9,8 +9,11 @@ load ProcessedModels.mat
 ProfSel = fieldnames(OptimizationResults);
 
 %% Step 5a: Visualize other profiles in comparison with the WT profile
-% Visualize the performance of fitted models and compare them with random
-% models
+% Visualize the performance (RMSEs and leakage) of fitted models and compare them with random
+% models. RMSEs measures the extent of differentiation between
+% glycoprofiles generated from the fitted models and the experimental
+% profiles, whereas leakage is the ratio of total signals not captured by
+% the experimental measurements.
 
 % VisualizePerformance(OptimizationResults,GenericNetwork);
 
