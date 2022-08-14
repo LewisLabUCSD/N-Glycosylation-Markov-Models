@@ -52,8 +52,8 @@ xtickangle(45);
 % set bar colors
 legend('Prediction','Location','northeast');
 for k = 1
-    h(k).FaceColor = rgb{k};
-    h(k).EdgeColor = rgb{k};%[0 0 0];
+    h.FaceColor = rgb{k};
+    h.EdgeColor = rgb{k};%[0 0 0];
 end
 
 % set axes, labels, and the title

@@ -29,10 +29,10 @@ for a = 1:length(ProfNames)
 
     [~,selIdx] = sort(ExpData);
     selIdx = selIdx((end-numSel+1):end);
-    [~,ord] = sort(mz_all(selIdx));
+    [~,ord] = sort(DataSet.mz_all(selIdx));
     selIdx = selIdx(ord);
     ExpData = ExpData(selIdx);
-    mz_all = mz_all(selIdx);
+    mz_all = DataSet.mz_all(selIdx);
 
 
     figure;
