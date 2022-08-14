@@ -32,7 +32,7 @@ fval = zeros(num,1);
 %% Prepare fitting constraints and parameters
 
 % Flag to indicate whether to consider LacNAc adjustment
-LacNAcflag = false;
+LacNAcflag = true;
 if LacNAcflag
     xvalDim = size(xval,2)-3+1;
 else
