@@ -1,4 +1,4 @@
-function [TPComp,PseudFluxComp,SensitivityComp,RxnComp] =  CompareTPandPseudoFlux(Prof1, Prof2,OptimizationResults,GenericNetwork)
+function ComparativeResults =  CompareTPandPseudoFlux(Prof1, Prof2,OptimizationResults,GenericNetwork,ComparativeResults)
 %% Load & initiate variables
 RxnTypes = GenericNetwork.RxnTypes;
 [RxnTypes,RxnIdx] = setdiff(RxnTypes,{'cg2mg','mg2tg','tg2ab'},'stable');
@@ -23,7 +23,8 @@ SensitivityMatSig = SensitivityMat;
 pval = 0.01;
 sensSig = 0.1;
 
-%% Compare results
+%% Compare model TPs
+
 for a = 1:length(RxnTypes)
     
     % Compute TP fold change
@@ -53,7 +54,31 @@ for a = 1:length(RxnTypes)
     SensitivityMatSig(a,:) = SensitivityMat(a,:)>sensSig;
 end
 
+%% Compare LacNAc elongation factor
+if ~isempty(OptimizationResults.(Prof1).LacNAcLenPenalty)
+    Pen1 = OptimizationResults.(Prof1).LacNAcLenPenalty;
+    Pen2 = OptimizationResults.(Prof2).LacNAcLenPenalty;
+
+    PenSens1 = OptimizationResults.(Prof1).SensitivityAnalysis.ErrorOverPertPct(strcmp(OptimizationResults.(Prof1).SensitivityAnalysis.RxnNames,'LacNAc Penalty'),:);
+    PenSens2 = OptimizationResults.(Prof2).SensitivityAnalysis.ErrorOverPertPct(strcmp(OptimizationResults.(Prof2).SensitivityAnalysis.RxnNames,'LacNAc Penalty'),:);
+
+    flag1 = ranksum(Pen1,Pen2)<pval;
+
+    if flag1 && max(abs(PenSens1)) < sensSig && max(abs(PenSens2)) > sensSig
+       LacNAcPenaltyFC = median(PenSens1);
+    elseif flag1 && max(abs(PenSens1)) > sensSig && max(abs(PenSens2)) < sensSig
+        LacNAcPenaltyFC = median(PenSens2);
+    elseif flag1 && max(abs(PenSens1)) < sensSig && max(abs(PenSens2)) < sensSig
+        LacNAcPenaltyFC = max([PenSens1,PenSens2]);
+    else
+        LacNAcPenaltyFC = 1;
+    end
+end
+
 %% Plot comparison results
+
+Prof1 = strrep(Prof1,'_','/');
+Prof2 = strrep(Prof2,'_','/');
 
 % TP 
 figure;
@@ -135,12 +160,14 @@ end
 set(h, 'YTickLabel', ticklabels_new);
 
 %% Record results
-TPComp.TPFCMean = TPFCMean;
-TPComp.TPFCSig = TPFCSig;
-PseudFluxComp.FluxFCMean = FluxFCMean;
-PseudFluxComp.FluxFCSig = FluxFCSig;
-SensitivityComp.SensitivityMat = SensitivityMat;
-SensitivityComp.SensitivityMatSig = SensitivityMatSig;
-RxnComp = RxnTypes;
+CompName = strrep([Prof1 '_vs_' Prof2],'/','_');
+ComparativeResults.(CompName).TPComp.TPFCMean = TPFCMean;
+ComparativeResults.(CompName).TPComp.TPFCSig = TPFCSig;
+ComparativeResults.(CompName).PseudFluxComp.FluxFCMean = FluxFCMean;
+ComparativeResults.(CompName).PseudFluxComp.FluxFCSig = FluxFCSig;
+ComparativeResults.(CompName).SensitivityComp.SensitivityMat = SensitivityMat;
+ComparativeResults.(CompName).SensitivityComp.SensitivityMatSig = SensitivityMatSig;
+ComparativeResults.(CompName).RxnComp = RxnTypes;
+ComparativeResults.(CompName).LacNAcPenaltyComp.LacNAcPenaltyFC = LacNAcPenaltyFC;
 
 end

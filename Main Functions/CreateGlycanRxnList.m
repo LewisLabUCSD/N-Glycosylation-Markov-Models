@@ -621,6 +621,14 @@ end
 
 AllrxnList = [Rxns;transportlist];
 
+%% Ignore GnTV and GnTIV branching if instructed
+if ismember('GnTIV',RxnSel)
+    AllrxnList(:,3) = cellfun(@(x) regexprep(x,'(?<=GnTIV)\_(I)+','') , AllrxnList(:,3), 'UniformOutput',false);
+end
+if ismember('GnTV',RxnSel)
+    AllrxnList(:,3) = cellfun(@(x) regexprep(x,'(?<=GnTV)\_(I)+','') , AllrxnList(:,3), 'UniformOutput',false);
+end
+
 %% Obtain the list of all generated glycans
 counter = 1;
 for a = 1:size(AllrxnList,1)

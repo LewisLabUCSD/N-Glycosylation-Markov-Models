@@ -31,18 +31,27 @@ fval = zeros(num,1);
 
 %% Prepare fitting constraints and parameters
 
+% Flag to indicate whether to consider LacNAc adjustment
+LacNAcflag = false;
+if LacNAcflag
+    xvalDim = size(xval,2)-3+1;
+else
+    xvalDim = size(xval,2)-3;
+    AllrxnList_LacNAcLen = [];
+end
+
 % Define optimization constraints (refer to the help document for MATLAB
 % function "optimproblem"). The scaling factor for each reaction type
 % (RxyTypes) is in the range of 10^[-4,4].
 Rxn_idx = find(~ismember(GenericNetwork.RxnTypes,{'cg2mg','mg2tg','tg2ab'}));
-optimproblem.x0 = 16*rand(1,size(xval,2)-3+1)-8;
+optimproblem.x0 = 16*rand(1,xvalDim)-8;
 % optimproblem.x0 = ones(1,size(xval,2)-3+1).*8;
-optimproblem.lb = ones(1,size(xval,2)-3+1).*-8;
+optimproblem.lb = ones(1,xvalDim).*-8;
 if StericFlag && ~UseWTStericFlag
     optimproblem.lb(end-length(stericRxns)+1:end-1) = 0;
 end
 optimproblem.lb(end) = 0;
-optimproblem.ub = ones(1,size(xval,2)-3+1).*8;
+optimproblem.ub = ones(1,xvalDim).*8;
 optimproblem.Aineq = [];
 optimproblem.bineq = [];
 optimproblem.Aeq = [];
@@ -148,5 +157,7 @@ OptimizationProblem.UseWTStericFlag = UseWTStericFlag;
 OptimizationProblem.WTSteric = WTSteric;
 OptimizationProblem.xval = xval;
 OptimizationProblem.fval = fval;
+OptimizationProblem.LacNAcflag = LacNAcflag;
+
 
 end

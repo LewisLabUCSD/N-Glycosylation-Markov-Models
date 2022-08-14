@@ -1,4 +1,4 @@
-function [PreData_temp] = PlotPredVsExp(ProfSel,OptimizationResults,numSel)
+function [PreData_temp,mz_temp] = PlotPredVsExp(ProfSel,OptimizationResults,numSel)
 %% Extract Data
 ExpData = OptimizationResults.(ProfSel).ExpData;
 PreData = OptimizationResults.(ProfSel).Predata_noRes;

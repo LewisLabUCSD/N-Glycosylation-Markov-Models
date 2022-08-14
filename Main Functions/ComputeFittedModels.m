@@ -4,7 +4,7 @@ function OptimizationResults = ComputeFittedModels(Prof,GenericNetwork,DataSet,O
 %%%%%%%%%%%%%%%%%%%%% Extract experimental data %%%%%%%%%%%%%%%%%%%%%
 ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 
-%%%%%%%%%%%%%%%%%%%%% Eliminate models with outlier errors %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% Extract model data from fitting results %%%%%%%%%%%%%%%%%%%%%
 xval = OptimizationResults.(Prof).xval;
 LacNAcLenPenalty = OptimizationResults.(Prof).LacNAcLenPenalty;
 StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag; 
@@ -40,7 +40,12 @@ TM_avg = 0;
 
 for a = 1:size(xval,1)
     
-    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux,TM] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,LacNAcLenPenalty(a));
+    LacNAcLenPen = [];
+    if ~isempty(LacNAcLenPenalty)
+        LacNAcLenPen = LacNAcLenPenalty(a);
+    end
+    
+    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux,TM] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,LacNAcLenPen);
     TM_avg = TM_avg+TM;
 
     % Initiate variables

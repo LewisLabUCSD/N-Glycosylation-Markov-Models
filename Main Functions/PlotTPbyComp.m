@@ -6,10 +6,13 @@ LacNAcLenPenalty =  OptimizationResults.(ProfSel).LacNAcLenPenalty;
 RxnTypes = GenericNetwork.RxnTypes;
 RxnTypes_noBr = cellfun(@(x) regexprep(x,'\_B\d',''),RxnTypes,'UniformOutput',0);
 AllrxnList = GenericNetwork.AllrxnList;
+if ismember('OptimizationProblem',fieldnames(OptimizationResults))
 StericFlag = OptimizationResults.(ProfSel).OptimizationProblem.StericFlag;
-AppliedGeneidx = OptimizationResults.(ProfSel).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(ProfSel).OptimizationProblem.stericRxns;
-
+else
+    StericFlag = false;
+    stericRxns = {};
+end
 % Identify RxnType compartments
 AllComp = cellfun(@(x) AllrxnList{find(strcmp(AllrxnList(:,3),x),1),4}(1:4), RxnTypes_noBr, 'UniformOutput',0);
 Comp = unique(AllComp);

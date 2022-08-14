@@ -25,13 +25,20 @@ combResults = struct;
 for a = 1:length(AllResults)
     fdNames = fieldnames(AllResults{a});
     optstruct = AllResults{a};
+
+    if ~ismember('LacNAcLenPenalty',fdNames)
+        LacNAcLenPenalty = [];
+    end
+
     for b = 1:length(fdNames)
+
         if ~ismember(fdNames{b},fieldnames(combResults))
             combResults.(fdNames{b}) = optstruct.(fdNames{b});
         else
             combResults.(fdNames{b}).xval = [combResults.(fdNames{b}).xval;optstruct.(fdNames{b}).xval];
             combResults.(fdNames{b}).fval = [combResults.(fdNames{b}).fval;optstruct.(fdNames{b}).fval];
             combResults.(fdNames{b}).LacNAcLenPenalty = [combResults.(fdNames{b}).LacNAcLenPenalty;optstruct.(fdNames{b}).LacNAcLenPenalty];
+
         end
     end
 end

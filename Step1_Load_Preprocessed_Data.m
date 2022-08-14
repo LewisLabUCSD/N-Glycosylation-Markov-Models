@@ -4,7 +4,7 @@ addpath('Aux Functions','Main Functions','Data');
 
 %% Step 1a. Load preprocessed data
 %%%%%%%%%%%%%%%%%%%% Required Data for fitting %%%%%%%%%%%%%%%%%%%%%%%%%
-[~,ProfNames] = xlsread('Data.xlsx','MS Raw','1:1');ProfNames = ProfNames(3:end)'; % name of each glycoprofile
+[~,ProfNames] = xlsread('Data.xlsx','MS Raw','1:1');ProfNames = ProfNames(3:end)'; ProfNames = strrep(ProfNames,'/','_');% name of each glycoprofile
 mz_all = xlsread('Data.xlsx','MS Raw','A:A'); % all measured m/z values
 [~,compositions] = xlsread('Data.xlsx','MS Raw','B:B'); compositions = compositions(2:end);% the monossacharide compositions
 profiles = xlsread('Data.xlsx','MS Raw');profiles = profiles(:,3:end); % relative intensities measured at the corresponding m/z
@@ -20,6 +20,6 @@ LinkageInfoAvail = any(LinkageResStructSel~=0); % whether glycan linkage annotat
 DataSet = ws2struct;
 
 %%%%%%%%%%%%%%%%%%%% visualize experimental data for sanity check %%%%%%%%%%%%%%%%%%%%%%%%%
-visualizeExpData(DataSet);
+visualizeExpData(DataSet,[],[]);
 
 save('Data/Data.mat','DataSet');

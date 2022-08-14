@@ -21,7 +21,9 @@ for k = 1:length(Rxn_idx)
 end
 
 % Consider LacNAc length (the last variable)
-TM(AllrxnList_LacNAcLen_idx)  = TM(AllrxnList_LacNAcLen_idx)./exp(LacNAcLenPenalty.*AllrxnList_LacNAcLen);
+if ~isempty(LacNAcLenPenalty)
+    TM(AllrxnList_LacNAcLen_idx)  = TM(AllrxnList_LacNAcLen_idx)./exp(LacNAcLenPenalty.*AllrxnList_LacNAcLen);
+end
 
 % consider steric interactions if StericFlag is true
 if StericFlag

@@ -26,9 +26,10 @@ VisualizePerformance(OptimizationResults);
 
  %% Step 5b. Compare transition probabilities,  pseudo fluxes, and TP sensitivities between models of two different glyprofiles
 
- % select the name of the base glycoprofile against which all other glycoprofiles are
- % compared, usually a wildtype glycoprofile.
+% select the name of the base glycoprofile against which all other glycoprofiles are
+% compared, usually a wildtype glycoprofile.
 ComparisonProf1 = 'WT';
+ComparativeResults = struct; % initiate the variable for storing comparison data;
 
 for a = 1:length(ProfSel)
     if ~strcmp(ComparisonProf1,ProfSel{a})
@@ -47,23 +48,23 @@ for a = 1:length(ProfSel)
         % regarding the fitted models and computed from Step 3.
         % 4. GenericNetwork: the struct variable containing the info regarding
         % a generic N-glycosylation network and computed from Step 2.
+        % 5. ComparativeResults: an empty struct variable to store the
+        % comparison data
 
         % Output:
-        % 1. TPComp: a struct containing the TP log10(fold change) (double-type variable) and
+        % ComparativeResults： a struct containing the following fields
+        % between the two compared samples:   
+        % a. TPComp: a struct containing the TP log10(fold change) (double-type variable) and
         % significance (double-type variable, ranksum test between all TP fold changes and sample permutations).
-        % 2. PseudoFluxComp: a struct containing the median model pseudo-flux log10(fold change) (double-type variable) and
+        % b. PseudoFluxComp: a struct containing the median model pseudo-flux log10(fold change) (double-type variable) and
         % significance (double-type variable, ranksum test between all pseudo-flux fold changes and sample permutations).
-        % 3. SensitivityComp: a struct containing the maximum sensitivity metrics computed from Step 4 (abs(RMSE%/Perturbation%))
+        % c. SensitivityComp: a struct containing the maximum sensitivity metrics computed from Step 4 (abs(RMSE%/Perturbation%))
         % and significance for each considered reaction types and compared profiles.
-        % 4. RxnComp: a cell of strings containing the row labels of the
+        % d. RxnComp: a cell of strings containing the row labels of the
         % reaction types considered for TPComp, PseudoFluxComp, and SensitivityComp
+        % e. 
 
-        CompName = [ProfSel{a} '_vs_' ComparisonProf1];
-        [ComparativeResults.(CompName).TPComp,...
-            ComparativeResults.(CompName).PseudoFluxComp,...
-            ComparativeResults.(CompName).SensitivityComp,...
-            ComparativeResults.(CompName).RxnComp] = ...
-            CompareTPandPseudoFlux(ProfSel{a}, ComparisonProf1,OptimizationResults,GenericNetwork);
+        ComparativeResults = CompareTPandPseudoFlux(ProfSel{a}, ComparisonProf1,OptimizationResults,GenericNetwork,ComparativeResults);
     end
 end
 

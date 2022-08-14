@@ -1,7 +1,14 @@
 function OptimizationResults = RecordOptimizationResults(Prof, OptimizationResults, xval, fval,OptimizationProblem)
 
+Prof = strrep(Prof,'/','_');
+
 % Load variables
+
+LacNAcflag = OptimizationProblem.LacNAcflag;
+if LacNAcflag
 LacNAcLenPenalty = xval(end);
+end
+
 xval = xval(1:end-1);
 Rxn_idx = OptimizationProblem.Rxn_idx;
 AppliedGeneidx = OptimizationProblem.AppliedGeneidx;
@@ -32,12 +39,15 @@ end
 if ~any(strcmp(Prof,fieldnames(OptimizationResults)))
     OptimizationResults.(Prof).xval = xval_full;
     OptimizationResults.(Prof).fval = fval;
+    if LacNAcflag
     OptimizationResults.(Prof).LacNAcLenPenalty = LacNAcLenPenalty;
-
+    end
 else % otherwise concatenate
     OptimizationResults.(Prof).xval = [OptimizationResults.(Prof).xval;xval_full];
     OptimizationResults.(Prof).fval = [OptimizationResults.(Prof).fval;fval];
+    if LacNAcflag
     OptimizationResults.(Prof).LacNAcLenPenalty = [OptimizationResults.(Prof).LacNAcLenPenalty;LacNAcLenPenalty];
+    end
 end
 
 OptimizationResults.(Prof).OptimizationProblem = OptimizationProblem;

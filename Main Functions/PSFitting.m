@@ -7,7 +7,9 @@ for k = 1:length(Rxn_idx)
 end
 
 % Consider LacNAc length (the last variable)
+if ~isempty(AllrxnList_LacNAcLen)
 TM(AllrxnList_LacNAcLen_idx)  = TM(AllrxnList_LacNAcLen_idx)./exp(scales(end).*AllrxnList_LacNAcLen);
+end
 
 %% Consider steric interactions 
 if StericFlag && isempty(WTSteric)

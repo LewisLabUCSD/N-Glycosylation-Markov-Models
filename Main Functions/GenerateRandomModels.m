@@ -7,11 +7,11 @@ ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 %%%%%%%%%%%%%%%%%%%%% Initate variables %%%%%%%%%%%%%%%%%%%%%
 xval = rand(simNum,size(OptimizationResults.(Prof).xval,2)).*10-5;
 RandomResults = struct;
-StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag; 
+StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag;
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
 Rxn_idx = OptimizationResults.(Prof).OptimizationProblem.Rxn_idx;
-LacNAcLenPenalty = rand([simNum,1])*6;
+LacNAcLenPenalty = OptimizationResults.(Prof).LacNAcLenPenalty;
 
 %% Apply each set of fitted transition probabilities to compute model characteristics
 
@@ -21,8 +21,8 @@ LacNAcLenPenalty = rand([simNum,1])*6;
 
 % Input:
 % 1. xval: double-type vector containing the set of transition
-% probabilities for a model. Extract from OptimizationResults (Step 3). 
-% 2. GenericNetwork: struct  constructed from Step 2 
+% probabilities for a model. Extract from OptimizationResults (Step 3).
+% 2. GenericNetwork: struct  constructed from Step 2
 % 3. ExpData: a double-type column vector extracted from DataSet (Step 1),
 % representing the experimental glycoprofile used for fitting
 
@@ -38,14 +38,18 @@ LacNAcLenPenalty = rand([simNum,1])*6;
 % reactions corresponding to the fluxes in PseudoFlux
 
 for a = 1:simNum
-    
-    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,LacNAcLenPenalty(a));
-    
+
+    LacNAcLenPen = [];
+    if ~isempty(LacNAcLenPenalty)
+        LacNAcLenPen = randi(16)-8;
+    end
+    [error,Predata_noRes,Predata_raw,Glys_raw,PseudoConc,Glys_conc,PseudoFlux,Rxn_flux] = ApplyTPstoGenericModels(xval(a,:),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,LacNAcLenPen);
+
     % Initiate variables
     if a == 1
-    RandomResults.error = error;RandomResults.Predata_noRes = Predata_noRes';RandomResults.Predata_raw = Predata_raw;RandomResults.Glys_raw = Glys_raw;
-    RandomResults.PseudoConc = PseudoConc;RandomResults.Glys_conc = Glys_conc;RandomResults.PseudoFlux = PseudoFlux';RandomResults.Rxn_flux = Rxn_flux;
-    % Update variables
+        RandomResults.error = error;RandomResults.Predata_noRes = Predata_noRes';RandomResults.Predata_raw = Predata_raw;RandomResults.Glys_raw = Glys_raw;
+        RandomResults.PseudoConc = PseudoConc;RandomResults.Glys_conc = Glys_conc;RandomResults.PseudoFlux = PseudoFlux';RandomResults.Rxn_flux = Rxn_flux;
+        % Update variables
     else
         RandomResults.error = [RandomResults.error;error];
         RandomResults.Predata_noRes = [RandomResults.Predata_noRes;Predata_noRes'];
@@ -59,7 +63,7 @@ end
 RandomResults.ExpData = ExpData';
 RandomResults.AnnotatedGlycans =  DataSet.LinkageResStruct(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
 RandomResults.AnnotatedMz =  DataSet.mz(DataSet.LinkageResStructSel(:,strcmp(Prof,DataSet.ProfNames)));
-RandomResults.mz_all = DataSet.mz_all; 
+RandomResults.mz_all = DataSet.mz_all;
 RandomResults.xval = xval;
 RandomResults.LacNAcLenPenalty = LacNAcLenPenalty;
 OptimizationResults.(Prof).RandomResults = RandomResults;

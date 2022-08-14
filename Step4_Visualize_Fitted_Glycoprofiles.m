@@ -3,14 +3,15 @@ close all;clc;clear;
 addpath('Aux Functions','Main Functions','Data','Data/OptimizationResults');
 load Data.mat;
 load GenericNetwork.mat;
-load ProcessedModels.mat;
+
+OptimizationResults = LoadOptimizationResults({'OptimizationResults_others','OptimizationResults_WT'});
 
 % Select the profiles to visualize
-ProfSel = fieldnames(OptimizationResults);
+ProfSel = {'Mgat2_St3gal4_St3gal6'};% fieldnames(OptimizationResults);
 
 % Visualize fitted model results for each selected profiles, sequentially
 % Progress bar
-f= waitbar(0,['Compute models and render visualization for: ',ProfSel{1}]);
+f= waitbar(0,['Compute models and render visualization for: ',strrep(ProfSel{1},'_','/'),sprintf(' (%d/%d)',1,length(ProfSel))]);
 
 for a = 1:length(ProfSel)
     %% Step 4a. Filter optimization results
@@ -84,7 +85,7 @@ for a = 1:length(ProfSel)
     %    i. AnnotatedMz: m/z values with annotations
     %    j. AnnotedGlycans: glycan annotations at the annotated m/z values
 
-    simNum = 15;
+    simNum = 20;
     OptimizationResults = ComputeFittedModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults);
     OptimizationResults = GenerateRandomModels(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,simNum);
 
@@ -123,8 +124,9 @@ for a = 1:length(ProfSel)
     % 1. ExpVsPredData: the signal intensities for each selected signals to be plotted (m/z).
     % Each row represents a fitted model and each column represents a
     % specific m/z.
+    % 2. mzData: the m/z values corresponding to the plotted signals.
 
-    OptimizationResults.(ProfSel{a}).ExpVsPredData = PlotPredVsExp(ProfSel{a},OptimizationResults,60);
+    [OptimizationResults.(ProfSel{a}).ExpVsPredData,OptimizationResults.(ProfSel{a}).mzData] = PlotPredVsExp(ProfSel{a},OptimizationResults,35);
 
     %% Step 4e. visualize glycoform ratios for each m/z
     % GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, 0.001);
@@ -230,7 +232,7 @@ for a = 1:length(ProfSel)
     OptimizationResults.(ProfSel{a}).SensitivityAnalysis = ConductSensitivityAnalysis(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,5);
 
     if a+1<length(ProfSel)
-        f= waitbar(a/length(ProfSel),['Compute models and render visualization for: ',ProfSel{a+1}]);
+        f= waitbar(a/length(ProfSel),['Compute models and render visualization for: ',ProfSel{a+1},sprintf('(%d/%d)',a,length(ProfSel))]);
     end
 end
 delete(f);
