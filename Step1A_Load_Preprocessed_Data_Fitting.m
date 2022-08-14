@@ -1,13 +1,13 @@
 %% Initiation
 close all;clc;clear;
-addpath('Aux Functions','Main Functions','DrugXData');
+addpath('Aux Functions','Main Functions','Data');
 
 DatafileName = 'Data.xlsx';
 
 %% Step 1a. Load preprocessed data
 %%%%%%%%%%%%%%%%%%%% Required Data for fitting %%%%%%%%%%%%%%%%%%%%%%%%%
-[~,ProfNames] = xlsread(DatafileName,'Annotation','1:1');ProfNames = ProfNames(3:end)'; ProfNames = strrep(ProfNames,'/','_');% name of each glycoprofile
-mz_all = unique(xlsread(DatafileName,'Annotation','A:A')); % all measured m/z values
+[~,ProfNames] = xlsread(DatafileName,'MS Raw','1:1');ProfNames = ProfNames(3:end)'; ProfNames = strrep(ProfNames,'/','_');% name of each glycoprofile
+mz_all = xlsread(DatafileName,'MS Raw','A:A'); % all measured m/z values
 
 [~,compositions] = xlsread(DatafileName,'MS Raw','B:B'); compositions = compositions(2:end);% the monossacharide compositions
 profiles = xlsread(DatafileName,'MS Raw');profiles = profiles(:,3:end); % relative intensities measured at the corresponding m/z

@@ -1,6 +1,6 @@
 %% Initiation
 close all;clc;clear;
-addpath('Aux Functions','Main Functions','DrugXData');
+addpath('Aux Functions','Main Functions','Data');
 
 DatafileName = 'DrugXData.xlsx';
 
