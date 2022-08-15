@@ -2,9 +2,6 @@ function [PreData_temp,mz_temp] = PlotPredGlycoprofile(ProfSel,OptimizationResul
 %% Extract Data
 PreData = OptimizationResults.(ProfSel).Predata_noRes;
 mz_all = OptimizationResults.(ProfSel).mz_all;
-errors = OptimizationResults.(ProfSel).error;
-leakage = mean(1-sum(PreData,2));
-
 
 
 %% Select the top number of signals to plot

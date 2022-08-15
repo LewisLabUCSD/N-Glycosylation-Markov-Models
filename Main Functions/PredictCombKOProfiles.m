@@ -5,6 +5,7 @@ Enz = {'St3gal','B4galt','Mgat5','Mgat4','Mgat2','Mgat1','B3gnt'};
 Rxns = {'a3SiaT','b4GalT','GnTV','GnTIV','GnTII','GnT1','iGnT'};
 
 basexval = OptimizationResults.(BaseProfSel).xval;
+basesensitivity = OptimizationResults.(BaseProfSel).SensitivityAnalysis;  
 FCVec = zeros(1,size(basexval,2));
 allLacNAcPenalty = [];
 

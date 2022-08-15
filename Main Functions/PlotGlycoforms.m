@@ -11,14 +11,15 @@ Glys = GenericNetwork.Glys;
 % numSel: number of top peaks selected (based on the values from
 % experimental profiles)
 
+
 if isempty(numSel)
-    numSel = 20;
-    if numSel>sum(ExpData~=0)
-        numSel = sum(ExpData~=0);
-    end
+    numSel = sum(ExpData~=0);
+end
+if numSel>sum(ExpData~=0)
+    numSel = sum(ExpData~=0);
 end
 
-[~,selIdx] = sort(ExpData);
+[~,selIdx] = sort(mean(OptimizationResults.(ProfSel).Predata_noRes,1));
 selIdx = selIdx((end-numSel+1):end);
 [~,ord] = sort(mz_all(selIdx));
 selIdx = selIdx(ord);
@@ -31,13 +32,13 @@ plotData_norm = plotData;
 for a = 1:length(AbsGlys)
     glys = AbsGlys{a};
     if ~isempty(glys)
-    plotData{a} = cellfun(@(x) mean(PreData(:,strcmp(Glys_raw,x)),1), glys,'UniformOutput',false);
-    if isempty(plotData{a}{1})
-        plotData{a} = 0;
-    else
-        plotData{a} = [plotData{a}{:}];
-        plotData_norm{a} = plotData{a}./sum(plotData{a});
-    end
+        plotData{a} = cellfun(@(x) mean(PreData(:,strcmp(Glys_raw,x)),1), glys,'UniformOutput',false);
+        if isempty(plotData{a}{1})
+            plotData{a} = 0;
+        else
+            plotData{a} = [plotData{a}{:}];
+            plotData_norm{a} = plotData{a}./sum(plotData{a});
+        end
     end
 end
 
@@ -72,13 +73,14 @@ end
 
 % plot heatmap
 figure;
+hold on
 imagesc(plotData);
 colormap(flip(autumn,1));
 colorbar
 xlabel('m/z (Exp/Pred)','FontWeight','bold'); ylabel('Glycoforms','FontWeight','bold');
-title({'Relative glycoform ratios at each m/z', '(major glycoforms highlighted red)'});
+title({['Relative glycoform ratios at each m/z for ',ProfSel], '(major glycoforms highlighted red)'});
 xticks(1:length(mz_temp));xticklabels(mz_temp);xtickangle(45);
-yticks(1:length(AllAbsGlys));yticklabels(AllAbsGlys);
+yticks(1:length(AllAbsGlys));yticklabels(strrep(AllAbsGlys,'[ab]',''));
 
 % modify axies
 idxSel = ismember(AllAbsGlys,yticklabhighlight);
@@ -86,6 +88,10 @@ ticklabels = get(gca,'YTickLabel');
 ticklabels_new = ticklabels;
 ticklabels_new(idxSel) = strcat('\color{red} ',ticklabels_new(idxSel));
 set(gca, 'YTickLabel', ticklabels_new);
+hold off
+
+% Plot glycan structures
+DrawGlycanStructure(strrep(yticklabhighlight,'[ab]',''),['Predicted ',ProfSel],mz_temp);
 
 % record data
 GlycoformData.plotData = plotData;

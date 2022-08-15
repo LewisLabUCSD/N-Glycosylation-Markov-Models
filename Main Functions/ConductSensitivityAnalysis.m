@@ -28,7 +28,7 @@ errorMat = zeros(length(RxnNames),length(ValueRange));
 
 f1 = waitbar(0,'Computing perturbed profile by perturbing:');
 for k1 = 1:length(RxnNames)
-    waitbar(k1/length(RxnNames),f1,['Computing perturbed profile by perturbing: ',RxnNames{k1}]);
+    waitbar(k1/length(RxnNames),f1,['Computing perturbed profile by perturbing: ',strrep(RxnNames{k1},'_',' ')]);
     for k2 = 1:length(ValueRange)
         
         xval_temp = [xval,LacNAcLenPenalty];

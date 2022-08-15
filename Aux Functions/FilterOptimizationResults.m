@@ -20,15 +20,15 @@ if strcmp(Method,'KernalDensity') && size(xval,1)>1
     TF = islocalmax([0,f,0]); % pad variable to reveal maxima in the range
     TF = xi(TF(2:end-1));
 
-   % Find inflection points
-    f2= diff(diff(f));
-    infpoint = [];
-    for a = 1:length(f2)-1
-        if f2(a)<=0 && f2(a+1)>0
-            infpoint = [infpoint,xi(a)];
-        end
-    end
-    TF = sort([TF,infpoint]);
+%    % Find inflection points
+%     f2= diff(diff(f));
+%     infpoint = [];
+%     for a = 1:length(f2)-1
+%         if f2(a)<=0 && f2(a+1)>0
+%             infpoint = [infpoint,xi(a)];
+%         end
+%     end
+%     TF = sort([TF,infpoint]);
 
     % cluster fvals based on distance to maxima and inflection points
     clusters = zeros(size(fval));
@@ -42,6 +42,9 @@ elseif strcmp(Method,'Outlier') && size(xval,1)>1
 
     selflag = ~isoutlier(fval);
 
+elseif strcmp(Method,'Freedman-Diaconis') && size(xval,1)>1
+    [~,binedges] = histcounts(fval,'BinMethod','fd');
+    selflag = fval<binedges(2);
 end
 
 

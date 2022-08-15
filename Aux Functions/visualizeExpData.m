@@ -4,7 +4,6 @@ if isempty(ProfNames)
     ProfNames = DataSet.ProfNames;
 end
 
-
 if ischar(ProfNames)
     ProfNames = {ProfNames};
 end
@@ -41,6 +40,12 @@ for a = 1:length(ProfNames)
     xticklabels(round(mz_all));
     title({'Experimental Profile', ['(',strrep(ProfNames{a},'_','/'),')']});
     xtickangle(45);
+
+    % visualize glycan annotations
+    sel = DataSet.LinkageResStructSel(:,a);
+    glys = DataSet.LinkageResStruct(sel);
+    mz_temp = DataSet.mz(sel);
+    DrawGlycanStructure(glys,['Exp ',ProfNames{a}],mz_temp);
 
 end
 

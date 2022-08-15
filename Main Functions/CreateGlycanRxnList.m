@@ -237,7 +237,7 @@ while counter <= K && targetflag
     Enzyme = 'GnTIV_I';
     if any(strcmp(Enzyme,Enzymes))
         SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
-        SubstrateString = '\(GNb2Ma3(?=\(\w+Ma6\))'; SubstrateString_alt = '\(GNb2Ma3(?=\(\w+Ma6\))';
+        SubstrateString = '\(GNb2Ma3(?=\(\w*Ma6\))'; SubstrateString_alt = '\(GNb2Ma3(?=\(\w*Ma6\))';
         ProductString = 'GNb2(GNb4)Ma3';
         
         % get corresponding substrates and add reactions
@@ -301,7 +301,7 @@ while counter <= K && targetflag
     Enzyme = 'GnTV_I';
     if any(strcmp(Enzyme,Enzymes))
         SubSystem = EnzLocs{strcmp(Enzymes,Enzyme)};
-        SubstrateString = '(?<=\(\w+Ma3)\(GNb2Ma6'; SubstrateString_alt = '(?<=\(\w+Ma3)\(GNb2Ma6';
+        SubstrateString = '(?<=\(\w*Ma3)\(GNb2Ma6'; SubstrateString_alt = '(?<=\(\w*Ma3)\(GNb2Ma6';
         ProductString = 'GNb2(GNb6)Ma6';
         
         % get corresponding substrates and add reactions

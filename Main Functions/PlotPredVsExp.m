@@ -13,6 +13,9 @@ leakage = mean(1-sum(PreData,2));
 if isempty(numSel)
     numSel = sum(ExpData~=0);
 end
+if numSel>sum(ExpData~=0)
+    numSel = sum(ExpData~=0);
+end
 
 
 [~,selIdx] = sort(ExpData);

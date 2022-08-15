@@ -7,7 +7,7 @@ load GenericNetwork.mat;
 OptimizationResults = LoadOptimizationResults({'OptimizationResults_others','OptimizationResults_WT'});
 
 % Select the profiles to visualize
-ProfSel = {'Mgat2_St3gal4_St3gal6'};% fieldnames(OptimizationResults);
+ProfSel = fieldnames(OptimizationResults);
 
 % Visualize fitted model results for each selected profiles, sequentially
 % Progress bar
@@ -38,6 +38,8 @@ for a = 1:length(ProfSel)
     %   b. 'Outlier': samples with ourlier fvals are filtered out. Outliers
     %   are defined as values more than 3 scaled MAD from the median. MAD is defined as
     %   -1/(sqrt(2)*erfcinv(3/2))*median(abs(fval-median(fval))).
+    %   c. 'Freedman-Diaconis': Freedman-Diaconis Method to include samples
+    %   with fvals falling into the smallest bin.
     % 4. removeOutlierFlag: If removeOutlierFlag is true, then the
     % algorithm will filter the samples using the specified Method.
 
@@ -45,9 +47,13 @@ for a = 1:length(ProfSel)
     % 1. OptimizationResults: processed OptimizationResults variable
 
     removeOutlierFlag = true;
-    Method = 'KernalDensity';
+    Method = 'Freedman-Diaconis';
     OptimizationResults = FilterOptimizationResults(ProfSel{a}, OptimizationResults, Method, removeOutlierFlag);
 
+    % whether to run more samples
+    if length(OptimizationResults.(ProfSel{a}).fval)<3
+        warning(['More fitted samples are suggested for ',ProfSel{a}, '.\n']);
+    end
 
     %% Step 4b. Compute model characteristics
 
@@ -152,7 +158,7 @@ for a = 1:length(ProfSel)
     %    b. mz: m/z values considered for the analysis
     %    c. AllAsGlys: all glycoforms considered for the analysis
     threshold = 1e-3;
-    OptimizationResults.(ProfSel{a}).GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,20, threshold);
+    OptimizationResults.(ProfSel{a}).GlycoformData = PlotGlycoforms(ProfSel{a},OptimizationResults,GenericNetwork,15, threshold);
     
 
     %%%%%%%%%%%%%%%%%%%%%%%%% Identify and List Top glycans %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,7 +238,7 @@ for a = 1:length(ProfSel)
     OptimizationResults.(ProfSel{a}).SensitivityAnalysis = ConductSensitivityAnalysis(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,5);
 
     if a+1<length(ProfSel)
-        f= waitbar(a/length(ProfSel),['Compute models and render visualization for: ',ProfSel{a+1},sprintf('(%d/%d)',a,length(ProfSel))]);
+        waitbar(a/length(ProfSel),f,['Compute models and render visualization for: ',strrep(ProfSel{a+1},'_','/'),sprintf('(%d/%d)',a,length(ProfSel))]);
     end
 end
 delete(f);

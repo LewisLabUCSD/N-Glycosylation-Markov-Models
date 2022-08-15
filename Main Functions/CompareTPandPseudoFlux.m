@@ -26,7 +26,7 @@ sensSig = 0.1;
 %% Compare model TPs
 
 for a = 1:length(RxnTypes)
-    
+
     % Compute TP fold change
     TPFCMean(a) = log10(median(TP1(:,a))/median(TP2(:,a)));
     TPFCDist = TP1(:,a)./TP2(:,a)';TPFCDist = TPFCDist(:);
@@ -65,7 +65,7 @@ if ~isempty(OptimizationResults.(Prof1).LacNAcLenPenalty)
     flag1 = ranksum(Pen1,Pen2)<pval;
 
     if flag1 && max(abs(PenSens1)) < sensSig && max(abs(PenSens2)) > sensSig
-       LacNAcPenaltyFC = median(PenSens1);
+        LacNAcPenaltyFC = median(PenSens1);
     elseif flag1 && max(abs(PenSens1)) > sensSig && max(abs(PenSens2)) < sensSig
         LacNAcPenaltyFC = median(PenSens2);
     elseif flag1 && max(abs(PenSens1)) < sensSig && max(abs(PenSens2)) < sensSig
@@ -80,7 +80,7 @@ end
 Prof1 = strrep(Prof1,'_','/');
 Prof2 = strrep(Prof2,'_','/');
 
-% TP 
+% TP
 figure;
 hold on
 h = subplot(1,3,1);
@@ -102,7 +102,7 @@ title(['log10(TP_{',Prof1,'}/TP_{',Prof2,'})']);
 ylabel('Reaction Types','FontWeight','bold');
 hold off
 
-% Flux 
+% Flux
 subplot(1,3,2)
 hold on
 imagesc(FluxFCMean);
@@ -132,9 +132,9 @@ colorbar;
 yticks([]);
 for a = 1:size(SensitivityMat,1)
     for b = 1:size(SensitivityMat,2)
-    if SensitivityMatSig(a,b) 
-        plot(b,a,'o','MarkerFaceColor','#f7c602','MarkerEdgeColor','#f7c602');
-    end
+        if SensitivityMatSig(a,b)
+            plot(b,a,'o','MarkerFaceColor','#f7c602','MarkerEdgeColor','#f7c602');
+        end
     end
 end
 xticks(1:2);
@@ -145,14 +145,15 @@ hold off
 hold off
 
 %% Highlight significant reaction types
-
 ticklabels = get(h,'YTickLabel');
+OverallSig = false(length(ticklabels),1);
 ticklabels_new = cell(size(ticklabels));
 for k = 1:length(ticklabels)
-    if TPFCSig(k) && (TPFCMean(k)>log10(1.1) || TPFCMean(k)<log10(0.9)) ...
-            && (FluxFCMean(k)>log10(1.1) || FluxFCMean(k)<log10(0.9))...
+    if (TPFCSig(k) && (TPFCMean(k)>log10(1.1) || TPFCMean(k)<log10(0.9))) ...
+            && (FluxFCSig(k) && (FluxFCMean(k)>log10(1.1) || FluxFCMean(k)<log10(0.9)))...
             && any(SensitivityMatSig(k,:))
-    ticklabels_new{k} = ['\color{red} ' ticklabels{k}];
+        ticklabels_new{k} = ['\color{red} ' ticklabels{k}];
+        OverallSig(k) = true;
     else
         ticklabels_new{k} = ticklabels{k};
     end
@@ -169,5 +170,5 @@ ComparativeResults.(CompName).SensitivityComp.SensitivityMat = SensitivityMat;
 ComparativeResults.(CompName).SensitivityComp.SensitivityMatSig = SensitivityMatSig;
 ComparativeResults.(CompName).RxnComp = RxnTypes;
 ComparativeResults.(CompName).LacNAcPenaltyComp.LacNAcPenaltyFC = LacNAcPenaltyFC;
-
+ComparativeResults.(CompName).OverallSig = OverallSig;
 end
