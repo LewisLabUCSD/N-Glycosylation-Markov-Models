@@ -23,6 +23,21 @@ LinkageInfoAvail = any(LinkageResStructSel~=0); % whether glycan linkage annotat
 DataSet = ws2struct;
 
 %%%%%%%%%%%%%%%%%%%% visualize experimental data for sanity check %%%%%%%%%%%%%%%%%%%%%%%%%
+
+% visualizeExpData(DataSet, ProfName, signalSel)
+
+% Input:
+% 1. DataSet: DataSet variable created from the previous steps in the
+% script
+% 2. ProfName: a string or a cell vector of strings of glycoprofile name(s)
+% to be plotted. ProfName should be present in the variable ProfNames. If
+% users would like to plot all glycoprofiles, enter [].
+% 3. signalSel: specify the number of top glycan structure annotations to be plotted.
+% enter [] to plot all annotations.
+
+% Output:
+% 1. Figure type 1: relative glycomic signals (glycoprofiles)
+% 2. Figure type 2: glycan structures at annotated m/z
 visualizeExpData(DataSet,[],[]);
 
 save('Data/Data.mat','DataSet');

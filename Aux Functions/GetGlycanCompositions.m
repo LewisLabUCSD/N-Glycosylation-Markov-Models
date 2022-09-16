@@ -1,4 +1,9 @@
-function compositions = GetGlycanCompositions(linearcodes)
+function GetGlycanCompositions(fileName)
+
+[~,linearcodes] = xlsread(fileName,'Annotation','B:B');
+alltext = xlsread(fileName,'Annotation');
+linearcodes = linearcodes(2:end);
+annotmat = alltext(:,3:end);
 
 compositions = cell(size(linearcodes));
 
@@ -27,4 +32,26 @@ for a = 1:length(compositions)
     compositions{a} = str;
 end
 
+compositions_unique = unique(compositions);
+[~,idx] = ismember(compositions,compositions_unique);
+
+% Write
+unique_Len = length(compositions_unique);
+Len = length(idx);
+z = 'A':'Z';
+signalmat = zeros(unique_Len,size(annotmat,2));
+for a = 1:size(signalmat,1)
+    for b = 1:size(signalmat,2)
+        signalmat(a,b) = sum(annotmat(a == idx,b));
+    end
+end
+
+out = arrayfun(@(x)z(rem(floor(x*26.^(1-floor(log(x)/log(26)+1):0)),26)),size(signalmat,2)+2,'un',0);
+annotmat = double(annotmat~=0);
+
+xlswrite(fileName,idx,'Annotation',['A2:A',num2str(Len+1)]);
+xlswrite(fileName,(1:unique_Len)','MS Raw',['A2:A',num2str(unique_Len+1)]);
+xlswrite(fileName,compositions_unique,'MS Raw',['B2:B',num2str(unique_Len+1)]);
+xlswrite(fileName,signalmat,'MS Raw',['C2:',out{1},num2str(unique_Len+1)]);
+xlswrite(fileName,annotmat,'Annotation',['C2:',out{1},num2str(unique_Len+1)]);
 end

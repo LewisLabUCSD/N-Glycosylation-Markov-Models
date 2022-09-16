@@ -53,8 +53,11 @@ for k = 1:length(Comp)
     else
         stem(1:length(sets{k}),xval_tot(:,sets{k}));
     end
+ 
+    if k == 1
+       ylabel('Log10(TP)');
+    end
 
-    ylabel('Log10 Relative Transition Probabilities');
     if strcmp(Comp{k},'[SF]')
         xticks(1:length(stericRxns));
         xticklabels(stericRxns);
@@ -72,7 +75,7 @@ for k = 1:length(Comp)
 end
 hold off
 
-sgtitle({['Transition Probabilities by Compartment (',ProfSel,')'], sprintf('(LacNAc Length Penalty = %0.1e)',mean(LacNAcLenPenalty))});
+sgtitle(['Transition Probabilities (TP) by Compartment (',strrep(ProfSel,'_','/'),')']);%, sprintf(' (LacNAc Length Penalty = %0.1e)',mean(LacNAcLenPenalty))]);
 hold off
 
 

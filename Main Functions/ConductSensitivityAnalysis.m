@@ -61,25 +61,25 @@ errorMat = errorMat(idx,:);
 RxnNames = RxnNames(idx);
 
 %% Plot perturbation results
-figure;
-hold on
-% plot negative
-for a = 1:middleidx-1
-barh(errorMat(:,a));
-end
-% plot positive
-for a = size(errorMat,2):-1:middleidx
-    barh(errorMat(:,a));
-end
-legend(cellstr(strcat(num2str(ValueRange([1:middleidx-1,end:-1:middleidx+1])'.*100),'%')));
-
-% label figure
-xlabel('RMSE Change%/Perturbation% (+/-)','FontWeight','bold');
-ylabel('Rxn Types','FontWeight','bold');
-yticks(1:length(RxnNames));
-yticklabels(strrep(RxnNames,'_',' '));
-title(['Sensitivity analysis for ',Prof]);
-hold off
+% figure;
+% hold on
+% % plot negative
+% for a = 1:middleidx-1
+% barh(errorMat(:,a));
+% end
+% % plot positive
+% for a = size(errorMat,2):-1:middleidx
+%     barh(errorMat(:,a));
+% end
+% legend(cellstr(strcat(num2str(ValueRange([1:middleidx-1,end:-1:middleidx+1])'.*100),'%')));
+% 
+% % label figure
+% xlabel('RMSE Change%/Perturbation% (+/-)','FontWeight','bold');
+% ylabel('Rxn Types','FontWeight','bold');
+% yticks(1:length(RxnNames));
+% yticklabels(strrep(RxnNames,'_',' '));
+% title(['Sensitivity analysis for ',Prof]);
+% hold off
 
 % Record data
 SensitivityAnalysis.ErrorOverPertPct = errorMat;

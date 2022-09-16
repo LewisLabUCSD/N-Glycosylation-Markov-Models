@@ -245,7 +245,8 @@ h.MarkerSize = NodeWt;
 labeledge(h,MajorEdges(:,1),MajorEdges(:,2),strrep(EdgeNames,'_',' '));
 highlight(h,AbsGlySel,'NodeColor','#D95319');
 xticks([]);yticks([]);
-title({'Major branching points in N-glycosylation biosynthetic network',[ProfSel, ' ,Node size proportional to log2(Pseudo-Concentration)']});
+title(['Major intermediate glycans in N-glycosylation biosynthetic network', '(',ProfSel,')']);
+% title({'Major branching points in N-glycosylation biosynthetic network',[ProfSel, ' ,Node size proportional to log2(Pseudo-Concentration)']});
 hold off
 
 % Store varaibles

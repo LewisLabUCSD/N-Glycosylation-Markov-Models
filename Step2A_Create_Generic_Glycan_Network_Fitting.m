@@ -1,7 +1,7 @@
 %% Initiation
 close all;clc;clear;
 addpath('Aux Functions','Main Functions','Data');
-load Data.mat
+load Data.mat;
 
 %% Step 2a. Construct a generic N-glycosylation network;
 
@@ -109,3 +109,5 @@ pi0_T = pi0(1:NT); % initial distribution state for all the glycans in the Marko
 %% Save the generic model
 GenericNetwork = ws2struct; 
 save('Data/GenericNetwork.mat','GenericNetwork');
+
+f = msgbox("Operation Completed");

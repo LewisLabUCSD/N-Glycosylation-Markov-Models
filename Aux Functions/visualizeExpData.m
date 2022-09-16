@@ -40,13 +40,17 @@ for a = 1:length(ProfNames)
     xticklabels(round(mz_all));
     title({'Experimental Profile', ['(',strrep(ProfNames{a},'_','/'),')']});
     xtickangle(45);
+    ylabel('Relative Abundance');
+    xlabel('m/z (or numbering)');
 
     % visualize glycan annotations
+    if LinkageInfoAvail
     sel = DataSet.LinkageResStructSel(:,a);
     glys = DataSet.LinkageResStruct(sel);
     mz_temp = DataSet.mz(sel);
     DrawGlycanStructure(glys,['Exp ',ProfNames{a}],mz_temp);
-
+    end
+    
 end
 
 end

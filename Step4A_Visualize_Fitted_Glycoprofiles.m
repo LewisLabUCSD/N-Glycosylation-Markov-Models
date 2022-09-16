@@ -4,7 +4,7 @@ addpath('Aux Functions','Main Functions','Data','Data/OptimizationResults');
 load Data.mat;
 load GenericNetwork.mat;
 
-OptimizationResults = LoadOptimizationResults({'OptimizationResults_others','OptimizationResults_WT'});
+OptimizationResults = LoadOptimizationResults({'OptimizationResults'});
 
 % Select the profiles to visualize
 ProfSel = fieldnames(OptimizationResults);
@@ -163,8 +163,8 @@ for a = 1:length(ProfSel)
 
     %%%%%%%%%%%%%%%%%%%%%%%%% Identify and List Top glycans %%%%%%%%%%%%%%%%%%%%%%%%%
     % Print the top 20 glycans to the command window
-    TopSel = 30;
-    OptimizationResults.(ProfSel{a}).GlycoformList = ListTopGlycans(ProfSel{a},OptimizationResults,GenericNetwork,TopSel);
+%     TopSel = 20;
+%     OptimizationResults.(ProfSel{a}).GlycoformList = ListTopGlycans(ProfSel{a},OptimizationResults,GenericNetwork,TopSel);
 
     %% Step 4f. visualize model pseudo-fluxes of fitted glycoprofiles
     % [plotData,plotErr] = PlotPredVsExp(ProfSel{a},OptimizationResults);
@@ -200,8 +200,8 @@ for a = 1:length(ProfSel)
     %%%%%%%%%%%%%%%%%%%%%%%%% Trace the synthetic pathway of a glycan %%%%%%%%%%%%%%%%%%%%%%%%%
     % You may trace the synthetic path leading to a specific glycan by using the
     % function:
-    startGly = '(Ab4GNb2(Ab4GNb4)Ma3(Ab4GNb2(Ab4GNb6)Ma6)Mb4GNb4(Fa6)GN);Asn' ;
-    TraceGlycanSynNetwork(ProfSel{a},GenericNetwork,OptimizationResults,startGly);
+%     startGly = '(Ab4GNb2(Ab4GNb4)Ma3(Ab4GNb2(Ab4GNb6)Ma6)Mb4GNb4(Fa6)GN);Asn' ;
+%     TraceGlycanSynNetwork(ProfSel{a},GenericNetwork,OptimizationResults,startGly);
 
     % startGly is the string of the starting glycan you would like to
     % trace. Proceeding and following glycans to startGly will be printed
@@ -235,7 +235,7 @@ for a = 1:length(ProfSel)
     %   RMSE divided by percentage perturbation. Each row represents a
     %   reaction type and each column represents a perturbation percentage.
 
-    OptimizationResults.(ProfSel{a}).SensitivityAnalysis = ConductSensitivityAnalysis(ProfSel{a},GenericNetwork,DataSet,OptimizationResults,5);
+    OptimizationResults.(ProfSel{a}).SensitivityAnalysis = ConductSensitivityAnalysis(ProfSel{a},GenericNetwork,DataSet,OptimizationResults);
 
     if a+1<length(ProfSel)
         waitbar(a/length(ProfSel),f,['Compute models and render visualization for: ',strrep(ProfSel{a+1},'_','/'),sprintf('(%d/%d)',a,length(ProfSel))]);

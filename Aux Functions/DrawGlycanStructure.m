@@ -5,6 +5,11 @@ if ischar(str)
 end
 strs = str;
 
+if nargin==1
+    filename = [];
+    mzVals = 1:length(strs);
+end
+
 plotWidth = ceil(length(strs)/5);
 
 % Initiate the plot
@@ -76,11 +81,13 @@ end
 
 h=axes(h,'visible','off'); 
 h.XLabel.Visible='on';
-xlabel(h, ['Major Glycoform at each m/z for ',strrep(filename,'_','/')],'FontWeight','bold');
 
 % save as png
 if ~isempty(filename)
+xlabel(h, ['Major Glycoform at annotated m/z for ',strrep(filename,'_','/')],'FontWeight','bold');
 saveas(gcf,['Figures/GlycanFigures/',filename,'.tif']);
+else
+    xlabel(h,'Glycoforms');
 end
 
 end

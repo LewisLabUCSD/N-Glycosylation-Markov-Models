@@ -5,6 +5,7 @@ PreData = OptimizationResults.(ProfSel).Predata_noRes;
 mz_all = OptimizationResults.(ProfSel).mz_all;
 errors = OptimizationResults.(ProfSel).error;
 leakage = mean(1-sum(PreData,2));
+randomModelflag = ismember({'RandomResults'},fieldnames(OptimizationResults.(ProfSel)));
 
 %% Select the top number of signals to plot
 % numSel: number of top peaks selected (based on the values from
@@ -73,6 +74,10 @@ xticklabels(round(mz_temp));
 xlabel('m/z');
 ylabel('Relative Intensity');
 title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (RMSE = %0.2e, leakage = %0.2e)'],mean(errors),leakage));
+if randomModelflag
+    randerr = OptimizationResults.(ProfSel).RandomResults.error  ;
+    title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (Fitted RMSE = %0.2e, Random RMSE = %0.2e, leakage = %0.2e)'],mean(errors),median(randerr),leakage));
+end
 set(gca,'fontweight','bold')
 set(gca,'TickLength',[0 0]);
 hold off

@@ -21,7 +21,7 @@ ProfSel = fieldnames(OptimizationResults);
 % 1. OptimizationResults: the struct variable containing the info
 % regarding the fitted models and computed from Step 3.
 
-VisualizePerformance(OptimizationResults);
+% VisualizePerformance(OptimizationResults);
 
 
  %% Step 5b. Compare transition probabilities,  pseudo fluxes, and TP sensitivities between models of two different glyprofiles

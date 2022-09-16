@@ -34,6 +34,6 @@ for a = 1:length(KnockoutSel)
 
     % Comparing predicted results and the experimental results as a sanity
     % check, if the experimental results exist.
-    visualizeExpData(DataSet,ProfName,numSel);
+    % visualizeExpData(DataSet,ProfName,numSel);
 
 end
