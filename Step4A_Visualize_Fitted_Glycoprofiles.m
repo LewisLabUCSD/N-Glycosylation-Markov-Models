@@ -52,7 +52,7 @@ for a = 1:length(ProfSel)
 
     % whether to run more samples
     if length(OptimizationResults.(ProfSel{a}).fval)<3
-        warning(['More fitted samples are suggested for ',ProfSel{a}, '.\n']);
+        warning(['More fitted samples are suggested for ',ProfSel{a}]);
     end
 
     %% Step 4b. Compute model characteristics

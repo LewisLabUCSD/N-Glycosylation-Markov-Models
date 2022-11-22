@@ -5,8 +5,7 @@ function SensitivityAnalysis = ConductSensitivityAnalysis(Prof,GenericNetwork,Da
 ExpData = DataSet.profiles(:,strcmp(DataSet.ProfNames,Prof));
 
 %%%%%%%%%%%%%%%%%%%%% Eliminate models with outlier errors %%%%%%%%%%%%%%%%%%%%%
-flag = ~isoutlier(OptimizationResults.(Prof).fval);
-xval = OptimizationResults.(Prof).xval(flag,:);
+xval = OptimizationResults.(Prof).xval;
 StericFlag = OptimizationResults.(Prof).OptimizationProblem.StericFlag;
 AppliedGeneidx = OptimizationResults.(Prof).OptimizationProblem.AppliedGeneidx;
 stericRxns = OptimizationResults.(Prof).OptimizationProblem.stericRxns  ;
@@ -38,20 +37,19 @@ for k1 = 1:length(RxnNames)
             xval_temp(:,Rxn_idx(k1)) = xval_temp(:,Rxn_idx(k1)).*(1+ValueRange(k2));
         end
         errorVec = zeros(size(xval_temp,1),1);
-        
+
         parfor a = 1:size(xval_temp,1)           
-            [errorVec(a)] = ApplyTPstoGenericModels(xval_temp(a,1:end-1),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,xval_temp(a,end));
+            [~,~,~,~,~,~,PseudoFlux] = ApplyTPstoGenericModels(xval_temp(a,1:end-1),Rxn_idx,GenericNetwork,ExpData,StericFlag,AppliedGeneidx,stericRxns,xval_temp(a,end));
+            errorVec(a) = sum(PseudoFlux(strcmp(RxnNames{k1},GenericNetwork.AllrxnList_RxnTypes)));
         end
         
         errorMat(k1,k2) = mean(errorVec);
-        
     end
 end
 delete(f1);
 
 % Normalize errorMat
 errorMat = errorMat./(errorMat(:,4));
-errorMat = abs(errorMat-errorMat(:,4));
 errorMat = errorMat./ValueRange;
 middleidx = ceil(length(ValueRange)/2);
 errorMat = errorMat(:,[1:middleidx-1,middleidx+1:end]);
@@ -74,7 +72,7 @@ RxnNames = RxnNames(idx);
 % legend(cellstr(strcat(num2str(ValueRange([1:middleidx-1,end:-1:middleidx+1])'.*100),'%')));
 % 
 % % label figure
-% xlabel('RMSE Change%/Perturbation% (+/-)','FontWeight','bold');
+% xlabel('Flux FC Change%/Perturbation% (+/-)','FontWeight','bold');
 % ylabel('Rxn Types','FontWeight','bold');
 % yticks(1:length(RxnNames));
 % yticklabels(strrep(RxnNames,'_',' '));

@@ -32,8 +32,4 @@ for a = 1:length(KnockoutSel)
     numSel = 20;
     OptimizationResults.(ProfName).ExpVsPredData = PlotPredGlycoprofile(ProfName,PredictedResults,numSel);
 
-    % Comparing predicted results and the experimental results as a sanity
-    % check, if the experimental results exist.
-    % visualizeExpData(DataSet,ProfName,numSel);
-
 end

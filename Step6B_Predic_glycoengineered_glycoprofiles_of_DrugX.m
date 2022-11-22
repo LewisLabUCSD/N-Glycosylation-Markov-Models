@@ -10,8 +10,7 @@ load ComparativeResults.mat
 % Fitted widetype and single-knockout models are required to predict the
 % combinatorial knockout glycoprofiles
 
-KnockoutSel = {{'St3gal4','St3gal6'};...
-    {'Mgat2','St3gal4','St3gal6'}};
+KnockoutSel = {{'Mgat2','St3gal4','St3gal6'}};
 BaseProfSel = 'WT';
 
 for a = 1:length(KnockoutSel)

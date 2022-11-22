@@ -9,6 +9,8 @@ Flux1 = OptimizationResults.(Prof1).FluxesbyComp(:,RxnIdx);
 Flux2 = OptimizationResults.(Prof2).FluxesbyComp(:,RxnIdx);
 Sens1 = OptimizationResults.(Prof1).SensitivityAnalysis.ErrorOverPertPct;
 Sens2 = OptimizationResults.(Prof2).SensitivityAnalysis.ErrorOverPertPct;
+% Sens1_std = OptimizationResults.(Prof1).SensitivityAnalysis.ErrorStd;
+% Sens2_std = OptimizationResults.(Prof2).SensitivityAnalysis.ErrorStd;
 Sens1Rxns = OptimizationResults.(Prof1).SensitivityAnalysis.RxnNames;
 Sens2Rxns = OptimizationResults.(Prof2).SensitivityAnalysis.RxnNames;
 perturbationPct = OptimizationResults.(Prof2).SensitivityAnalysis.perturbationPct;
@@ -21,9 +23,10 @@ SensitivityMat = zeros(length(RxnTypes),2);
 SensitivityMatSig = SensitivityMat;
 
 % Set significance level
-pval = 0.05;
-sensSig = 0.1;
-
+pval = 0.001; % higher sig level for usually small sample size 
+sensSig1 = 1.1/0.05; % sensitive TPs defined as with 5% value perturbation at least 10% change of flux FC is observed
+sensSig2 = 0.9/-0.05; % sensitive TPs defined as with 5% value perturbation at least 10% change of flux FC is observed
+sensSig=  max(abs([sensSig1,sensSig2]));
 %% Compare model TPs
 
 for a = 1:length(RxnTypes)
@@ -33,6 +36,7 @@ for a = 1:length(RxnTypes)
     indexSel1 = find(strcmp(RxnTypes{a},Sens1Rxns),1);
     indexSel2 = find(strcmp(RxnTypes{a},Sens2Rxns),1);
     Sens1_temp = abs(Sens1(indexSel1,:));Sens2_temp = abs(Sens2(indexSel2,:));
+   % Sens1_temp_std = Sens1_std(indexSel1,:);Sens2_temp_std = Sens2_std(indexSel2,:);
     SensitivityMat(a,:) = [max(Sens1_temp),max(Sens2_temp)];
     SensitivityMatSig(a,:) = SensitivityMat(a,:)>sensSig;
 
@@ -44,11 +48,11 @@ for a = 1:length(RxnTypes)
         TP1PerturbRange = linspace(min(perturbationPct(Sens1_temp<0.01)),max(perturbationPct(Sens1_temp<0.01)),50);
         TP1_temp = zeros(length(TP1(:,a))*50,1);
         for k = 1:50
-            TP1_temp((k-1)*length(TP1(:,a))+1:k*length(TP1(:,a))) = log10(TP1(:,a)).*(1+TP1PerturbRange(k));
+            TP1_temp((k-1)*length(TP1(:,a))+1:k*length(TP1(:,a))) = log2(TP1(:,a)).*(1+TP1PerturbRange(k));
         end
         % TP1_temp = 10.^TP1_temp;
     else
-        TP1_temp = log10(TP1(:,a));
+        TP1_temp = log2(TP1(:,a));
     end
 
     TP2Min = min(perturbationPct(Sens2_temp<0.01));TP2Max = max(perturbationPct(Sens2_temp<0.01));
@@ -58,11 +62,11 @@ for a = 1:length(RxnTypes)
         TP2PerturbRange = linspace(min(perturbationPct(Sens2_temp<0.01)),max(perturbationPct(Sens2_temp<0.01)),50);
         TP2_temp = zeros(length(TP2(:,a))*50,1);
         for k = 1:50
-            TP2_temp((k-1)*length(TP2(:,a))+1:k*length(TP2(:,a))) = log10(TP2(:,a)).*(1+TP2PerturbRange(k));
+            TP2_temp((k-1)*length(TP2(:,a))+1:k*length(TP2(:,a))) = log2(TP2(:,a)).*(1+TP2PerturbRange(k));
         end
         % TP2_temp = 10.^TP2_temp;
     else
-        TP2_temp = log10(TP2(:,a));
+        TP2_temp = log2(TP2(:,a));
     end
     
     % TP1_temp = TP1(:,a);TP2_temp = TP2(:,a);
@@ -76,14 +80,14 @@ for a = 1:length(RxnTypes)
     TPFCSig(a) = ranksum(TPFCPermDistq,TPFCDist)<pval;
 
     % Comptue Flux fold change
-    FluxFCMean(a) = log10(median(Flux1(:,a))/median(Flux2(:,a)));
+    FluxFCMean(a) = log2(median(Flux1(:,a))/median(Flux2(:,a)));
     FluxFCDist = Flux1(:,a)./Flux2(:,a)';FluxFCDist = FluxFCDist(:);
     FluxCombVec = [Flux1(:,a);Flux2(:,a)];FluxCombVecLen = length(FluxCombVec);
     FluxFCPermDistq = zeros(1000,1);
     for b = 1:1000 % 1000 permutations
         FluxFCPermDistq(b) = FluxCombVec(randi(FluxCombVecLen))./FluxCombVec(randi(FluxCombVecLen));
     end
-    FluxFCMean(a) = log10(median(FluxFCDist));
+    FluxFCMean(a) = log2(median(FluxFCDist));
     FluxFCSig(a) = ranksum(FluxFCPermDistq,FluxFCDist)<pval;
 
 end
@@ -128,11 +132,11 @@ yticks(1:length(RxnTypes));
 yticklabels(strrep(RxnTypes,'_',' '));
 xticks([]);
 for a = 1:length(TPFCSig)
-    if TPFCSig(a) && (TPFCMean(a)>log10(1.1) || TPFCMean(a)<log10(0.9))
+    if TPFCSig(a) && (TPFCMean(a)>log2(1.1) || TPFCMean(a)<log2(1/1.1))
         plot(1,a,'o','MarkerFaceColor','#f7c602','MarkerEdgeColor','#f7c602');
     end
 end
-title(['log10(TP_{',Prof1,'}-log10(TP_{',Prof2,'})']);
+title(['log2(TP_{',Prof1,'}/TP_{',Prof2,'})']);
 ylabel('Reaction Types','FontWeight','bold');
 hold off
 
@@ -147,11 +151,11 @@ colorbar;
 yticks([]);
 xticks([]);
 for a = 1:length(FluxFCSig)
-    if FluxFCSig(a) && (FluxFCMean(a)>log10(1.1) || FluxFCMean(a)<log10(0.9))
+    if FluxFCSig(a) && (FluxFCMean(a)>log2(1.1) || FluxFCMean(a)<log2(1/1.1))
         plot(1,a,'o','MarkerFaceColor','#f7c602','MarkerEdgeColor','#f7c602');
     end
 end
-title(['log10(Flux_{',Prof1,'}/Flux_{',Prof2,'})']);
+title(['log2(Flux_{',Prof1,'}/Flux_{',Prof2,'})']);
 hold off
 
 % Sensitivity
@@ -174,7 +178,7 @@ end
 xticks(1:2);
 xticklabels({Prof1,Prof2});
 xlabel('Prof Name','FontWeight','bold');
-title({'Sensitivity for each reaction','(max abs(RMSE%/Perturbation%))'});
+title({'Sensitivity for each reaction','(max abs(log2(PseudoFlux FC)/TP Perturbation%)'});
 hold off
 hold off
 
@@ -183,9 +187,9 @@ ticklabels = get(h,'YTickLabel');
 OverallSig = false(length(ticklabels),1);
 ticklabels_new = cell(size(ticklabels));
 for k = 1:length(ticklabels)
-    if (TPFCSig(k) && (TPFCMean(k)>log10(1.1) || TPFCMean(k)<log10(0.9))) ...
-                 && (FluxFCSig(k) && (FluxFCMean(k)>log10(1.1) || FluxFCMean(k)<log10(0.9)))...
-              && any(SensitivityMatSig(k,:))
+    if (TPFCSig(k) && (TPFCMean(k)>log2(1.1) || TPFCMean(k)<log2(1/1.1))) ...
+                 && (FluxFCSig(k) && (FluxFCMean(k)>log2(1.1) || FluxFCMean(k)<log2(1/1.1)))...
+              && any(SensitivityMatSig(k,1))
 
         ticklabels_new{k} = ['\color{red} ' ticklabels{k}];
         OverallSig(k) = true;

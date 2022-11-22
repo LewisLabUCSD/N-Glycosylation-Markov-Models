@@ -93,7 +93,7 @@ for a = 1:length(ProfSel)
     end
 end
 
-%% Step 3c. Store the fitting resultIDNum = 1;
+%% Step 3c. Store the fitting result
 IDNum = 1;
 savedFileName = ['OptimizationResults_',num2str(IDNum),'.mat'];
 save('Data/OptimizationResults/',savedFileName,'OptimizationResults');

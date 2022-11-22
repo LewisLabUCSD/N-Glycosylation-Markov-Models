@@ -15,8 +15,10 @@ Glys = GenericNetwork.Glys;
 if isempty(numSel)
     numSel = sum(ExpData~=0);
 end
-if numSel>sum(ExpData~=0)
-    numSel = sum(ExpData~=0);
+if ~isempty(ExpData)
+    if numSel>sum(ExpData~=0)
+        numSel = sum(ExpData~=0);
+    end
 end
 
 [~,selIdx] = sort(mean(OptimizationResults.(ProfSel).Predata_noRes,1));
