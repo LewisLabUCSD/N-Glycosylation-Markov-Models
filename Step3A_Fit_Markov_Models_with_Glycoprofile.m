@@ -96,5 +96,5 @@ end
 %% Step 3c. Store the fitting result
 IDNum = 1;
 savedFileName = ['OptimizationResults_',num2str(IDNum),'.mat'];
-save('Data/OptimizationResults/',savedFileName,'OptimizationResults');
+save(['Data/OptimizationResults/',savedFileName],'OptimizationResults');
 msgbox(['Operation Completed for ',savedFileName]);
