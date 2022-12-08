@@ -14,6 +14,9 @@ end
 
 
 [~,selIdx] = sort(mean(PreData,1));
+if numSel>length(selIdx)
+    numSel = length(selIdx);
+end
 selIdx = selIdx((end-numSel+1):end);
 [~,ord] = sort(mz_all(selIdx));
 selIdx = selIdx(ord);
@@ -31,8 +34,8 @@ plotData = [ExpData_temp;plotPreData]';
 
 % biased estimation of error
 err = nan(size(PreData_temp,2),2);
-err(:,2,1) = std(PreData_temp,[],1);
-err(:,2,2) = std(PreData_temp,[],1);
+err(:,2,1) = std(PreData_temp,[],1)./sqrt(size(PreData_temp,1));
+err(:,2,2) = std(PreData_temp,[],1)./sqrt(size(PreData_temp,1));
 for a = 1:length(err(:,2,2))
     if plotPreData(a)-err(a,2,1)<0
         err(a,2,1) = plotPreData(a);

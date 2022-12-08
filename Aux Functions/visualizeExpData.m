@@ -15,10 +15,13 @@ if ~isempty(DataSet.LinkageResStruct)
     LinkageResStruct = DataSet.LinkageResStruct;
     LinkageInfoAvail = DataSet.LinkageInfoAvail;
     LinkageResStructSel = DataSet.LinkageResStructSel;
+else
+    error('Linkage annotations are incomplete or not provided for m/z values.');
 end
 
 for a = 1:length(ProfNames)
 
+    idx = find(strcmp(ProfNames{a},DataSet.ProfNames),1);
     ExpData = profiles(:,strcmp(DataSet.ProfNames,ProfNames{a}));
 
     if isempty(numSel)
@@ -27,6 +30,9 @@ for a = 1:length(ProfNames)
 
 
     [~,selIdx] = sort(ExpData);
+    if numSel>length(selIdx)
+        numSel = length(selIdx);
+    end
     selIdx = selIdx((end-numSel+1):end);
     [~,ord] = sort(DataSet.mz_all(selIdx));
     selIdx = selIdx(ord);
@@ -45,12 +51,12 @@ for a = 1:length(ProfNames)
 
     % visualize glycan annotations
     if LinkageInfoAvail
-    sel = DataSet.LinkageResStructSel(:,a);
-    glys = DataSet.LinkageResStruct(sel);
-    mz_temp = DataSet.mz(sel);
-    DrawGlycanStructure(glys,['Exp ',ProfNames{a}],mz_temp);
+        sel = DataSet.LinkageResStructSel(:,idx);
+        glys = DataSet.LinkageResStruct(sel);
+        mz_temp = DataSet.mz(sel);
+        DrawGlycanStructure(glys,['Exp ',ProfNames{a}],mz_temp);
     end
-    
+
 end
 
 end

@@ -22,7 +22,7 @@ end
 % only perturb actual reactions
 RxnNames = GenericNetwork.RxnTypes(Rxn_idx);
 RxnNames = [RxnNames;{'LacNAc Penalty'}];
-ValueRange = [-0.5 -0.1 -0.01 0 0.01 0.1 0.5];
+ValueRange = [-0.5 -0.1 -0.05 0 0.05 0.1 0.5];
 errorMat = zeros(length(RxnNames),length(ValueRange));
 
 f1 = waitbar(0,'Computing perturbed profile by perturbing:');
@@ -43,15 +43,14 @@ for k1 = 1:length(RxnNames)
             errorVec(a) = sum(PseudoFlux(strcmp(RxnNames{k1},GenericNetwork.AllrxnList_RxnTypes)));
         end
         
-        errorMat(k1,k2) = mean(errorVec);
+        errorMat(k1,k2) = median(errorVec);
     end
 end
 delete(f1);
 
 % Normalize errorMat
-errorMat = errorMat./(errorMat(:,4));
-errorMat = errorMat./ValueRange;
 middleidx = ceil(length(ValueRange)/2);
+errorMat = log2(errorMat./(errorMat(:,middleidx)));
 errorMat = errorMat(:,[1:middleidx-1,middleidx+1:end]);
 % sort errorMat
 [~,idx] = sort(max(abs(errorMat),[],2),'descend');

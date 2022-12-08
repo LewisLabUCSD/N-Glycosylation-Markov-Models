@@ -17,16 +17,18 @@ perturbationPct = OptimizationResults.(Prof2).SensitivityAnalysis.perturbationPc
 
 TPFCMean = zeros(size(RxnTypes));
 TPFCSig = zeros(size(RxnTypes));
+TPFCSpread = zeros(size(RxnTypes));
 FluxFCMean = zeros(size(RxnTypes));
 FluxFCSig = zeros(size(RxnTypes));
 SensitivityMat = zeros(length(RxnTypes),2);
 SensitivityMatSig = SensitivityMat;
+TPFCDistTot = [];
 
 % Set significance level
-pval = 0.001; % higher sig level for usually small sample size 
-sensSig1 = 1.1/0.05; % sensitive TPs defined as with 5% value perturbation at least 10% change of flux FC is observed
-sensSig2 = 0.9/-0.05; % sensitive TPs defined as with 5% value perturbation at least 10% change of flux FC is observed
-sensSig=  max(abs([sensSig1,sensSig2]));
+pval = 0.001; % higher sig level for smaller sample size 
+sensSig1 = log2(1.05); % sensitive TPs defined as with 5% value perturbation at least 2% change of flux FC is observed
+sensSig2 = log2(0.95); % sensitive TPs defined as with 5% value perturbation at least 2% change of flux FC is observed
+
 %% Compare model TPs
 
 for a = 1:length(RxnTypes)
@@ -35,10 +37,10 @@ for a = 1:length(RxnTypes)
     % compute sensitivity significance
     indexSel1 = find(strcmp(RxnTypes{a},Sens1Rxns),1);
     indexSel2 = find(strcmp(RxnTypes{a},Sens2Rxns),1);
-    Sens1_temp = abs(Sens1(indexSel1,:));Sens2_temp = abs(Sens2(indexSel2,:));
-   % Sens1_temp_std = Sens1_std(indexSel1,:);Sens2_temp_std = Sens2_std(indexSel2,:);
-    SensitivityMat(a,:) = [max(Sens1_temp),max(Sens2_temp)];
-    SensitivityMatSig(a,:) = SensitivityMat(a,:)>sensSig;
+    Sens1_temp = Sens1(indexSel1,:);Sens2_temp = Sens2(indexSel2,:);
+    SensitivityMatSig(a,1) = any(Sens1_temp([3,4])>sensSig1 | Sens1_temp([3,4])<sensSig2);
+    SensitivityMatSig(a,2) = any(Sens2_temp([3,4])>sensSig1 | Sens2_temp([3,4])<sensSig2);
+    SensitivityMat(a,:) = [max(abs(Sens1_temp([3,4]))),max(abs(Sens2_temp([3,4])))];
 
     % Compute TP fold change
     TP1Min = min(perturbationPct(Sens1_temp<0.01));TP1Max = max(perturbationPct(Sens1_temp<0.01));
@@ -77,6 +79,7 @@ for a = 1:length(RxnTypes)
         TPFCPermDistq(b) = TPCombVec(randi(TPCombVecLen))-TPCombVec(randi(TPCombVecLen));
     end
     TPFCMean(a) = median(TPFCDist);
+    TPFCSpread(a) = std(TPFCDist);
     TPFCSig(a) = ranksum(TPFCPermDistq,TPFCDist)<pval;
 
     % Comptue Flux fold change
@@ -88,7 +91,8 @@ for a = 1:length(RxnTypes)
         FluxFCPermDistq(b) = FluxCombVec(randi(FluxCombVecLen))./FluxCombVec(randi(FluxCombVecLen));
     end
     FluxFCMean(a) = log2(median(FluxFCDist));
-    FluxFCSig(a) = ranksum(FluxFCPermDistq,FluxFCDist)<pval;
+    FluxSig = 0.05; % a threshold for fluxes to be considered for significance due to potential noises in the fitting process, defined as the standard error of the larger flux 
+    FluxFCSig(a) = ranksum(FluxFCPermDistq,FluxFCDist)<pval && (median(Flux1(:,a)) > FluxSig || median(Flux2(:,a)) > FluxSig);
 
 end
 
@@ -178,18 +182,19 @@ end
 xticks(1:2);
 xticklabels({Prof1,Prof2});
 xlabel('Prof Name','FontWeight','bold');
-title({'Sensitivity for each reaction','(max abs(log2(PseudoFlux FC)/TP Perturbation%)'});
+title({'Sensitivity for each reaction','(max abs(log2(Flux FC) at +/-5% TP perturbation)'});
 hold off
 hold off
+
 
 %% Highlight significant reaction types
 ticklabels = get(h,'YTickLabel');
 OverallSig = false(length(ticklabels),1);
 ticklabels_new = cell(size(ticklabels));
 for k = 1:length(ticklabels)
-    if (TPFCSig(k) && (TPFCMean(k)>log2(1.1) || TPFCMean(k)<log2(1/1.1))) ...
-                 && (FluxFCSig(k) && (FluxFCMean(k)>log2(1.1) || FluxFCMean(k)<log2(1/1.1)))...
-              && any(SensitivityMatSig(k,1))
+    if (TPFCSig(k) && (TPFCMean(k)>log2(1.5) || TPFCMean(k)<log2(1/1.5))) ...
+                 && (FluxFCSig(k) && (FluxFCMean(k)>log2(1.05) || FluxFCMean(k)<log2(0.95)))...
+              && any([Flux1(k)>0.05, Flux2(k)>0.02]) % && SensitivityMatSig(k,1) 
 
         ticklabels_new{k} = ['\color{red} ' ticklabels{k}];
         OverallSig(k) = true;
@@ -202,7 +207,9 @@ set(h, 'YTickLabel', ticklabels_new);
 %% Record results
 CompName = strrep([Prof1 '_vs_' Prof2],'/','_');
 ComparativeResults.(CompName).TPComp.TPFCMean = TPFCMean;
+ComparativeResults.(CompName).TPComp.TPFCSpread = TPFCSpread;
 ComparativeResults.(CompName).TPComp.TPFCSig = TPFCSig;
+ComparativeResults.(CompName).TPComp.TPFCDist = TPFCDistTot;
 ComparativeResults.(CompName).PseudFluxComp.FluxFCMean = FluxFCMean;
 ComparativeResults.(CompName).PseudFluxComp.FluxFCSig = FluxFCSig;
 ComparativeResults.(CompName).SensitivityComp.SensitivityMat = SensitivityMat;
@@ -210,4 +217,5 @@ ComparativeResults.(CompName).SensitivityComp.SensitivityMatSig = SensitivityMat
 ComparativeResults.(CompName).RxnComp = RxnTypes;
 ComparativeResults.(CompName).LacNAcPenaltyComp.LacNAcPenaltyFC = LacNAcPenaltyFC;
 ComparativeResults.(CompName).OverallSig = OverallSig;
+
 end

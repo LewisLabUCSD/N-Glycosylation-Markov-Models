@@ -94,7 +94,7 @@ for k = 1:3
     hold on
     h = barwitherr(err(:,sets{k},:), RctPseudoConcbyComp_mean(sets{k}));
     xlabel(['Rxn Types (',setnames{k},')']);
-    ylabel('Total relative pseudo-fluxes');
+    ylabel('Total relative pseudo-concentration of reactants');
     xticks(1:length(RxnTypes(sets{k})));
     xticklabels(strrep(RxnTypes(sets{k}),'_',' '));
     xtickangle(45);

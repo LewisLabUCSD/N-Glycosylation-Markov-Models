@@ -10,8 +10,7 @@ load ComparativeResults.mat
 % Fitted widetype and single-knockout models are required to predict the
 % combinatorial knockout glycoprofiles
 
-KnockoutSel = {{'St3gal4','St3gal6'};...
-    {'Mgat2','St3gal4','St3gal6'}};
+KnockoutSel = {{'Mgat2','St3gal4','St3gal6'}};
 BaseProfSel = 'WT';
 
 for a = 1:length(KnockoutSel)
@@ -27,9 +26,9 @@ for a = 1:length(KnockoutSel)
     [PredictedResults.(ProfName).xval_median]= PlotTPbyComp(ProfName,PredictedResults,GenericNetwork);
 
     threshold = 1e-3;
-    OptimizationResults.(ProfName).GlycoformData = PlotGlycoforms(ProfName,PredictedResults,GenericNetwork,15, threshold);
+    OptimizationResults.(ProfName).GlycoformData = PlotGlycoforms(ProfName,PredictedResults,GenericNetwork,25, threshold);
 
-    numSel = 20;
+    numSel = 25;
     OptimizationResults.(ProfName).ExpVsPredData = PlotPredGlycoprofile(ProfName,PredictedResults,numSel);
 
 end

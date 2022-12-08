@@ -22,6 +22,9 @@ if ~isempty(ExpData)
 end
 
 [~,selIdx] = sort(mean(OptimizationResults.(ProfSel).Predata_noRes,1));
+if numSel>length(selIdx)
+    numSel = length(selIdx);
+end
 selIdx = selIdx((end-numSel+1):end);
 [~,ord] = sort(mz_all(selIdx));
 selIdx = selIdx(ord);
@@ -79,8 +82,8 @@ hold on
 imagesc(plotData);
 colormap(flip(autumn,1));
 colorbar
-xlabel('m/z (Exp/Pred)','FontWeight','bold'); ylabel('Glycoforms','FontWeight','bold');
-title({['Relative glycoform ratios at each m/z for ',ProfSel], '(major glycoforms highlighted red)'});
+xlabel('m/z (numbering)','FontWeight','bold'); ylabel('Glycoforms','FontWeight','bold');
+title({['Predicted relative glycoform ratios at each m/z (or numbering) for ',strrep(ProfSel,'_','/')], '(major glycoforms highlighted red)'});
 xticks(1:length(mz_temp));xticklabels(mz_temp);xtickangle(45);
 yticks(1:length(AllAbsGlys));yticklabels(strrep(AllAbsGlys,'[ab]',''));
 
