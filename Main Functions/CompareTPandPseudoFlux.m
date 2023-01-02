@@ -101,19 +101,12 @@ if ~isempty(OptimizationResults.(Prof1).LacNAcLenPenalty)
     Pen1 = OptimizationResults.(Prof1).LacNAcLenPenalty;
     Pen2 = OptimizationResults.(Prof2).LacNAcLenPenalty;
 
-    PenSens1 = OptimizationResults.(Prof1).SensitivityAnalysis.ErrorOverPertPct(strcmp(OptimizationResults.(Prof1).SensitivityAnalysis.RxnNames,'LacNAc Penalty'),:);
-    PenSens2 = OptimizationResults.(Prof2).SensitivityAnalysis.ErrorOverPertPct(strcmp(OptimizationResults.(Prof2).SensitivityAnalysis.RxnNames,'LacNAc Penalty'),:);
-
     flag1 = ranksum(Pen1,Pen2)<pval;
 
-    if flag1 && max(abs(PenSens1)) < sensSig && max(abs(PenSens2)) > sensSig
-        LacNAcPenaltyFC = median(PenSens1);
-    elseif flag1 && max(abs(PenSens1)) > sensSig && max(abs(PenSens2)) < sensSig
-        LacNAcPenaltyFC = median(PenSens2);
-    elseif flag1 && max(abs(PenSens1)) < sensSig && max(abs(PenSens2)) < sensSig
-        LacNAcPenaltyFC = max([PenSens1,PenSens2]);
+    if flag1
+        LacNAcPenaltyFC = median(Pen1);
     else
-        LacNAcPenaltyFC = 1;
+        LacNAcPenaltyFC = median([Pen1;Pen2]);
     end
 end
 
@@ -194,7 +187,7 @@ ticklabels_new = cell(size(ticklabels));
 for k = 1:length(ticklabels)
     if (TPFCSig(k) && (TPFCMean(k)>log2(1.5) || TPFCMean(k)<log2(1/1.5))) ...
                  && (FluxFCSig(k) && (FluxFCMean(k)>log2(1.05) || FluxFCMean(k)<log2(0.95)))...
-              && any([Flux1(k)>0.05, Flux2(k)>0.02]) % && SensitivityMatSig(k,1) 
+              && any([Flux1(k)>0.05, Flux2(k)>0.05]) % && SensitivityMatSig(k,1) 
 
         ticklabels_new{k} = ['\color{red} ' ticklabels{k}];
         OverallSig(k) = true;

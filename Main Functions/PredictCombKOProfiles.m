@@ -39,13 +39,13 @@ for k = 1:SampSize
         for b = 1:length(KOs)
 
             if Sigflag(b,a)
-%                 EnzIdx = find(cellfun(@(x) contains(KOs{b},x) ,Enz),1);
-%                 RxnsIdx = find(cellfun(@(x) contains(RxnTypes{a},x) ,Rxns),1);
-%                 if EnzIdx == RxnsIdx
+                EnzIdx = find(cellfun(@(x) contains(KOs{b},x) ,Enz),1);
+                RxnsIdx = find(cellfun(@(x) contains(RxnTypes{a},x) ,Rxns),1);
+                if EnzIdx == RxnsIdx
                     FCVec(a) = FCVec(a)+(normrnd(TPFCVec(b,a),TPFCVecSpread(b,a)));
-%                 elseif  ~any(RxnsIdx==allEnzIdx)
-%                     FCVec(a) = FCVec(a)+normrnd(TPFCVec(b,a),TPFCVecSpread(b,a))./sum(Sigflag(:,a));
-%                 end
+                elseif  ~any(RxnsIdx==allEnzIdx)
+                    FCVec(a) = FCVec(a)+normrnd(TPFCVec(b,a),TPFCVecSpread(b,a))./sum(Sigflag(:,a));
+                end
             end
 
         end
