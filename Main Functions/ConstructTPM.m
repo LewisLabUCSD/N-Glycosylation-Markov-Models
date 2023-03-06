@@ -50,8 +50,18 @@ parfor k = 1:size(AllrxnList,1)
 
         AllrxnList_Br(k) = loc;
 
-        % a reactant site is called "shielded" if the addition site is on a
-        % branch where the neighboring branches are longer than the branch where the addition site is on.
+       % … "Shielded-ness" is not considered in the current version of the pipeline. 
+% The resulted variable AllrxnList_steric is not used in the current version of the toolkit.
+%Briefly, the “shielded-ness” of a branch is a simple attempt to describe the accessibility of an N-glycan 
+%branch, whose neighboring branches may exert varied steric effects to glycosyltransferases based on their 
+%lengths. However, its usefulness as a model parameter remains unclear, and as a such, it has been excluded 
+%from the current version of the toolkit. 
+%We would like to emphasize that our previous publication (Liang et al., 2020) has demonstrated the 
+%accuracy of our methodology for fitting and predicting glycosylation patterns, even without the inclusion 
+%of "shielded-ness" as a parameter.
+%– Liang, et al. A Markov model of glycosylation elucidates isozyme specificity and 
+%     glycosyltransferase interactions for glycoengineering. Curr Res Biotechnol. 2020:22-36.   
+
         neighborIdx = intersect(1:4,[loc-1 loc+1]);
         shieldflag = false(1,length(neighborIdx));
         addbranchLen = length(strfind(Rctbranches{loc},'a')) + length(strfind(Rctbranches{loc},'b'));

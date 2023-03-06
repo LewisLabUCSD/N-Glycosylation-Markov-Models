@@ -192,6 +192,7 @@ set(gca,'xtick',[]);set(gca,'ytick',[]);
 hold off
 
 hold off
+close gcf;
 
 % Record data
 Subnetwork.G_trimmed = G_sub;
