@@ -58,28 +58,41 @@ end
 figure
 hold on
 rgb = {[0.25 0.25 0.25],[42 128 185]./255};
-h = barwitherr(err,plotData);
-xtickangle(45);
 
-% set bar colors
-legend('Experimental','Prediction','Location','northwest');
-for k = 1:2
-    h(k).FaceColor = rgb{k};
-    h(k).EdgeColor = rgb{k};%[0 0 0];
+if all(size(plotPreData) == [1,1])
+    h = bar(1,plotData(1));h2 = bar(2,plotData(2));
+
+    h.FaceColor = rgb{1};h.EdgeColor = rgb{1};
+    h2.FaceColor = rgb{2};h2.EdgeColor = rgb{2};
+    errorbar(2,plotPreData,err(1,2,1),err(1,2,2),'k.');
+    legend('Experimental','Prediction','Location','northwest');
+
+else
+
+    h = barwitherr(err,plotData);
+    xtickangle(45);
+
+    % set bar colors
+    legend('Experimental','Prediction','Location','northwest');
+    for k = 1:2
+        h(k).FaceColor = rgb{k};
+        h(k).EdgeColor = rgb{k};%[0 0 0];
+    end
+
+    % set axes, labels, and the title
+    xticks(1:length(mz_temp));
+    xticklabels(round(mz_temp));
+    xlabel('m/z');
+    ylabel('Relative Intensity');
+    title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (RMSE = %0.2e, leakage = %0.2e)'],mean(errors),leakage));
+    if randomModelflag
+        randerr = OptimizationResults.(ProfSel).RandomResults.error  ;
+        title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (Fitted RMSE = %0.2e, Random RMSE = %0.2e, leakage = %0.2e)'],mean(errors),median(randerr),leakage));
+    end
+    set(gca,'fontweight','bold')
+    set(gca,'TickLength',[0 0]);
 end
 
-% set axes, labels, and the title
-xticks(1:length(mz_temp));
-xticklabels(round(mz_temp));
-xlabel('m/z');
-ylabel('Relative Intensity');
-title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (RMSE = %0.2e, leakage = %0.2e)'],mean(errors),leakage));
-if randomModelflag
-    randerr = OptimizationResults.(ProfSel).RandomResults.error  ;
-    title(sprintf(['Global Optimization for Matching Markov Model to ', ProfSel ,' Experimental Profile \n (Fitted RMSE = %0.2e, Random RMSE = %0.2e, leakage = %0.2e)'],mean(errors),median(randerr),leakage));
-end
-set(gca,'fontweight','bold')
-set(gca,'TickLength',[0 0]);
 hold off
 
 
