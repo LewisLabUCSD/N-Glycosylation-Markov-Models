@@ -68,6 +68,7 @@ Please read through this section ***before*** you start the process. You may als
 
 ## **Reference**
 1. [A Markov model of glycosylation elucidates isozyme specificity and glycosyltransferase interactions for glycoengineering](https://www.sciencedirect.com/science/article/pii/S2590262820300010\).)
+2. [GlycoMME, a Markov modeling platform for studying N-glycosylation biosynthesis from glycomics data](https://www.sciencedirect.com/science/article/pii/S2666166723002022?via%3Dihub)
 
 ## **Additional Info**
 For additional questions, please reach out to [Systems Biology and Cell Engineering – Lewis Lab](https://lewislab.ucsd.edu/) at the University of California, San Diego.  
